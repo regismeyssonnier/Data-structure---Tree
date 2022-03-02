@@ -13,4 +13,4 @@ Use add and sumto find the sum of a range.
 
 # Bit tree(Fenwick tree)
 
-Use add to create the tree and inter to sum a range.
+Use add to create and add to the tree and inter to sum a range.
