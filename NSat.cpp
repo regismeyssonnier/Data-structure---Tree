@@ -9,21 +9,21 @@ using namespace std;
 
 #define SAT 2
 
-void dfs2(vector<vector<int>>& kadj, int f, int x, vector<bool> &vis, vector<vector<int>>& r, int ri) {
+void dfs2(vector<vector<int>>& kadj, int f, int x, vector<bool> &vis, vector<int>& li) {
 
 	
 
 	for (int i = 0; i < kadj[x].size(); i++) {
 		
-		if (kadj[x][i] == f) {
+		/*if (kadj[x][i] == f) {
 			break;
-		}
+		}*/
 
 		if (!vis[kadj[x][i]]) {
 			
-			r[ri].push_back(kadj[x][i]);
+			li.push_back(kadj[x][i]);
 			vis[kadj[x][i]] = true;
-			dfs2(kadj, f, kadj[x][i], vis, r, ri);
+			dfs2(kadj, f, kadj[x][i], vis, li);
 			
 			
 		}
@@ -32,40 +32,45 @@ void dfs2(vector<vector<int>>& kadj, int f, int x, vector<bool> &vis, vector<vec
 	return;
 }
 
-void dfs(vector<vector<int>>& kadj, vector<vector<int>> &r) {
+void dfs(vector<vector<int>>& kadj, vector<int> &r) {
 
 	vector<bool> vis(kadj.size(), false);
-	cout << "why " << endl;
-	int ri = 0;
+	vector<int> li;
+	
 	for (int i = 1; i < kadj.size(); i++) {
-		cout << "i1 " << i << endl;
+		 
 		if (!vis[i]) {
-			r[ri].push_back(i);
-			cout << "i2 " << i << endl;
+			li.push_back(i);
+			
 			vis[i] = true;
-			dfs2(kadj, i, i, vis, r, ri);
-			ri++;
+			dfs2(kadj, i, i, vis, li);
+			for (int j = li.size() - 1; j >= 0; j--) {
+				r.push_back(li[j]);
+			}
+			li.clear();
+		
+			
 		}
 	}
 
 }
 
 
-void dfsf2(vector<vector<int>>& kadj, int f, int x, vector<bool>& vis, vector<vector<int>>& r, int ri) {
+void dfsf2(vector<vector<int>>& kadj,  int f, int x, vector<bool>& vis, vector<vector<int>>& r, int ri) {
 
 	///if (x == f)return;
-
+	//if (kadj[x].size() == 1)return;
 	for (int i = 0; i < kadj[x].size(); i++) {
-		cout << "t " << f << " " << kadj[x][i] << endl;
+		
 		if (kadj[x][i] == f) {
 			break;
 		}
 
 		if (!vis[kadj[x][i]]) {
-			cout << "--" << kadj[x][i] << endl;
+			
 			r[ri].push_back(kadj[x][i]);
 			vis[kadj[x][i]] = true;
-			dfs2(kadj, f, kadj[x][i], vis, r, ri);
+			dfsf2(kadj, f, kadj[x][i], vis, r, ri);
 
 
 		}
@@ -74,18 +79,18 @@ void dfsf2(vector<vector<int>>& kadj, int f, int x, vector<bool>& vis, vector<ve
 	return;
 }
 
-void dfsf(vector<vector<int>>& kadj, vector<vector<int>>& r) {
+void dfsf(vector<vector<int>>& kadj, vector<int>& l, vector<vector<int>>& r) {
 
-	vector<bool> vis(kadj.size(), false);
+	vector<bool> vis(l.size()+1, false);
 	
 	int ri = 0;
-	for (int i = kadj.size()-1; i >= 1 ; i--) {
+	for (int i = l.size()-1; i >= 0 ; i--) {
 		
-		if (!vis[i]) {
-			r[ri].push_back(i);
+		if (!vis[l[i]]) {
+			r[ri].push_back(l[i]);
 			
-			vis[i] = true;
-			dfs2(kadj, i, i, vis, r, ri);
+			vis[l[i]] = true;
+			dfsf2(kadj, l[i], l[i], vis, r, ri);
 			ri++;
 		}
 	}
@@ -159,14 +164,14 @@ int main()
 
 	}
 
-	/*for (int i = 1; i < 2 * (n)+1; i++) {
+	for (int i = 1; i < 2 * (n)+1; i++) {
 		if (adj[i].size() > 0) {
 			for (int j = 0; j < adj[i].size(); j++) {
-				//kadj[adj[i][j]].push_back(i);
-				kadj[i].push_back(adj[i][j]);
+				kadj[adj[i][j]].push_back(i);
+				//kadj[i].push_back(adj[i][j]);
 			}
 		}
-	}*/
+	}
 
 	for (int i = 1; i < 2 * (n )+1; i++) {
 		cout << "i : "<<i << " = ";
@@ -175,28 +180,24 @@ int main()
 		}cout << endl;
  	}
 	cout << "---------------------------------" << endl;
-	/*for (int i = 1; i < 2 * (n)+1; i++) {
+	for (int i = 1; i < 2 * (n)+1; i++) {
 		cout << "i : " << i << " = ";
 		for (int j = 0; j < kadj[i].size(); j++) {
 			cout << kadj[i][j] << " ";
 		}cout << endl;
 	}
-	cout << "---------------------------------" << endl;*/
+	cout << "---------------------------------" << endl;
 
-	vector<vector<int>> r(2 * (n )+1), r2(2 * (n )+1), r3(2 * (n)+1);
+	vector<vector<int>> r(2 * (n )+1), r3(2 * (n)+1);
+	vector<int> r2;
+	dfs(adj, r2);
+
+	/*for (int i = 0; i < r2.size(); i++) {
+		cout << r2[i] << " - ";
+	}cout << endl; */
 	
-	dfsf(adj, r);
-
-	/*for (int i = 1; i < 2 * (n)+1; i++) {
-		if (r[i].size() > 0) {
-			for (int j = 0; j < r[i].size(); j++) {
-				//kadj[adj[i][j]].push_back(i);
-				r2[r[i][j]].push_back(i);
-			}
-		}
-	}
-
-	dfsf(r2, r3);*/
+	dfsf(kadj, r2, r);
+		
 
 	for (int i = 0; i < r.size(); i++) {
 		if (r[i].size() > 0) {
@@ -231,7 +232,7 @@ int main()
 	vector<int> rr;
 	vector<bool> rr2(2*n+1);
 	vector<int> vis(2 * n + 1, false);
-	for (int i = 0; i < r.size(); i++) {
+	for (int i = r.size()-1; i >= 0 ; i--) {
 		for (int j = 0; j < r[i].size(); j++) {
 			if (!vis[r[i][j]]) {
 				if (r[i][j] <= n) {
