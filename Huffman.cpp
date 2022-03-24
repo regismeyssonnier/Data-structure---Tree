@@ -86,7 +86,7 @@ int main()
 	}
 
 	int countb = 0;
-	vector<Node*> Byte;
+	vector<Node*> Byte, DelByte;
 	priority_queue < Node*, vector <Node*>, CompNode > p(CompNode(true));
 	for (auto &e : f) {
 		countb += e.second;
@@ -95,6 +95,7 @@ int main()
 		n->sright = nullptr;
 		p.push(n);
 		Byte.push_back(n);
+		DelByte.push_back(n);
 		//cout << e.first << " " << e.second << endl;
 	}
 	countb *= 8;
@@ -128,6 +129,7 @@ int main()
 				father->sright = first;
 			}*/
 			p.push(father);
+			DelByte.push_back(father);
 		
 		}
 		root = new Node('r', first->w + second->w);
@@ -136,7 +138,7 @@ int main()
 		second->father = root;
 		root->sleft = second;
 		root->sright = first;
-		
+		DelByte.push_back(root);
 
 	}
 	
@@ -150,5 +152,10 @@ int main()
 
 	cout << "Text : " << countb << " bits huffman " << huff << " bits "<< endl;
 	cout << " soit " << (1.0-((double)huff / (double)countb)) * 100.0 << "% compression" << endl;
+
+	for (int i = 0; i < DelByte.size(); i++) {
+		delete DelByte[i];
+	}
+
 }
 
