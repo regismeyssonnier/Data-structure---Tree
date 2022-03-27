@@ -232,3 +232,1412 @@ Catégories :
     Wikimedia Foundation
     Powered by MediaWiki
 
+
+Aller au contenu
+Afficher / masquer la barre latérale
+Wikipédia l'encyclopédie libre
+Rechercher
+
+    Créer un compte
+
+Outils personnels
+
+    Article
+    Discussion
+
+    Lire
+    Modifier
+    Modifier le code
+    Voir l’historique
+
+    Accueil
+    Portails thématiques
+    Article au hasard
+    Contact
+
+Contribuer
+
+    Débuter sur Wikipédia
+    Aide
+    Communauté
+    Modifications récentes
+    Faire un don
+
+Outils
+
+    Pages liées
+    Suivi des pages liées
+    Téléverser un fichier
+    Pages spéciales
+    Lien permanent
+    Informations sur la page
+    Citer cette page
+    Élément Wikidata
+    Modifier les liens interlangues
+
+Imprimer / exporter
+
+    Créer un livre
+    Télécharger comme PDF
+    Version imprimable
+
+Dans d’autres projets
+
+    Wikimedia Commons
+
+Langues
+Sur cette version linguistique de Wikipédia, les liens interlangues sont placés en haut à droite du titre de l’article.
+Aller en haut.
+Codage de Huffman
+Page d’aide sur l’homonymie
+
+Pour les articles homonymes, voir Huffman.
+
+Le codage de Huffman est un algorithme de compression de données sans perte. Le codage de Huffman utilise un code à longueur variable pour représenter un symbole de la source (par exemple un caractère dans un fichier). Le code est déterminé à partir d'une estimation des probabilités d'apparition des symboles de source, un code court étant associé aux symboles de source les plus fréquents.
+
+Un code de Huffman est optimal au sens de la plus courte longueur pour un codage par symbole, et une distribution de probabilité connue. Des méthodes plus complexes réalisant une modélisation probabiliste de la source permettent d'obtenir de meilleurs ratios de compression.
+
+Il a été inventé par David Albert Huffman, et publié en 1952.
+Sommaire
+
+    1 Principe
+    2 Différentes méthodes de construction de l'arbre
+    3 Propriétés
+    4 Limitations du codage de Huffman
+    5 Code canonique
+    6 Utilisations
+    7 Histoire
+    8 Voir aussi
+        8.1 Articles connexes
+        8.2 Liens externes
+    9 Bibliographie
+    10 Notes et références
+
+Principe
+
+Le principe du codage de Huffman repose sur la création d'une structure d'arbre composée de nœuds.
+
+Supposons que la phrase à coder est « this is an example of a huffman tree ». On recherche tout d'abord le nombre d'occurrences de chaque caractère. Dans l'exemple précédent, la phrase contient 2 fois le caractère h et 7 espaces. Chaque caractère constitue une des feuilles de l'arbre à laquelle on associe un poids égal à son nombre d'occurrences.
+
+L'arbre est créé de la manière suivante, on associe chaque fois les deux nœuds de plus faibles poids, pour donner un nouveau nœud dont le poids équivaut à la somme des poids de ses fils. On réitère ce processus jusqu'à n'en avoir plus qu'un seul nœud : la racine. On associe ensuite par exemple le code 0 à chaque embranchement partant vers la gauche et le code 1 vers la droite.
+Un exemple d'arbre de Huffman, généré avec la phrase « this is an example of a huffman tree ».
+
+Pour obtenir le code binaire de chaque caractère, on remonte l'arbre à partir de la racine jusqu'aux feuilles en rajoutant à chaque fois au code un 0 ou un 1 selon la branche suivie. La phrase « this is an example of a huffman tree » se code alors sur 135 bits au lieu de 288 bits (si le codage initial des caractères tient sur 8 bits). Il est nécessaire de partir de la racine pour obtenir les codes binaires car sinon lors de la décompression, partir des feuilles peut entraîner une confusion lors du décodage.
+
+Pour coder « Wikipedia », nous obtenons donc en binaire : 101 11 011 11 100 010 001 11 000, soit 24 bits au lieu de 63 (9 caractères x 7 bits par caractère) en utilisant les codes ASCII (7 bits).
+Différentes méthodes de construction de l'arbre
+
+Il existe trois variantes de l'algorithme de Huffman, chacune d'elles définissant une méthode pour la création de l'arbre :
+
+    statique : chaque octet a un code prédéfini par le logiciel. L'arbre n'a pas besoin d'être transmis, mais la compression ne peut s'effectuer que sur un seul type de fichier (ex. : un texte en français, où les fréquences d'apparition du 'e' sont énormes ; celui-ci aura donc un code très court, rappelant l'alphabet morse) ;
+    semi-adaptatif : le fichier est d'abord lu, de manière à calculer les occurrences de chaque octet, puis l'arbre est construit à partir des poids de chaque octet. Cet arbre restera le même jusqu'à la fin de la compression. Cette compression occasionnera un gain de bits supérieur ou égal au codage de Huffman statique mais il sera nécessaire, pour la décompression, de transmettre l'arbre, ce qui annulera généralement le gain obtenu1 ;
+    adaptatif : c'est la méthode qui offre a priori les meilleurs taux de compression car il utilise un arbre connu (et ainsi non transmis) qui sera ensuite modifié de manière dynamique au fur et à mesure de la compression du flux selon les symboles précédemment rencontrés1. Cette méthode représente cependant le gros désavantage de devoir modifier souvent l'arbre, ce qui implique un temps d'exécution plus long. Par contre, la compression est toujours optimale et il n'est pas nécessaire que le fichier soit connu avant de compresser. En particulier, l'algorithme est capable de travailler sur des flux de données (streaming), car il n'est pas nécessaire de connaître les symboles à venir.
+
+Propriétés
+
+Un code de Huffman est un code de source. Pour une source S {\displaystyle S} S, représentée par une variable aléatoire X {\displaystyle X} X, de distribution de probabilité p {\displaystyle p} p, l'espérance de la longueur d'un code C {\displaystyle C} C est donnée par
+L ( C ) = ∑ x ∈ Ω p ( x ) ⋅ l ( x ) {\displaystyle L(C)=\sum _{x\in \Omega }p(x)\cdot l(x)} L(C)=\sum_{x \in \Omega}p(x) \cdot l(x)
+
+Où l ( x ) {\displaystyle l(x)} l(x) est la longueur du mot de code, C ( x ) {\displaystyle C(x)} C(x) le code associé au symbole de source x {\displaystyle x} x, et Ω {\displaystyle \Omega } \Omega est l'ensemble des symboles de source.
+
+Un code de Huffman est un code préfixe à longueur variable. Il est optimal, au sens de la plus courte longueur, pour un codage par symbole2. C'est-à-dire que pour un code de Huffman C ∗ {\displaystyle C^{*}} C^*, et pour tout code C {\displaystyle C} C uniquement décodable, alors :
+L ( C ∗ ) ≤ L ( C ) {\displaystyle L(C^{*})\leq L(C)} L(C^*) \le L(C)
+Limitations du codage de Huffman
+
+On peut montrer que pour une source X {\displaystyle X} X, d'entropie de Shannon H ( X ) {\displaystyle H(X)} H(X) la longueur moyenne L {\displaystyle L} L d'un mot de code obtenu par codage de Huffman vérifie:
+H ( X ) ≤ L < H ( X ) + 1 {\displaystyle H(X)\leq L<H(X)+1} H(X) \le L < H(X)+1
+
+Cette relation montre que le codage de Huffman s'approche de l'entropie de la source et c'est-à-dire du code optimum mais cela peut s'avérer en fait assez peu intéressant dans le cas où l'entropie de la source est forte, et où un surcoût de 1 bit devient important. De plus le codage de Huffman impose d'utiliser un nombre entier de bit pour un symbole source, ce qui peut s'avérer peu efficace.
+
+Une solution à ce problème est de travailler sur des blocs de n {\displaystyle n} n symboles. On montre alors qu'on peut s'approcher de façon plus fine de l'entropie :
+H ( X ) ≤ L < H ( X ) + 1 n {\displaystyle H(X)\leq L<H(X)+{\frac {1}{n}}} H(X) \le L < H(X)+\frac{1}{n}
+
+mais le processus d'estimation des probabilités devient plus complexe et coûteux.
+
+De plus, le codage de Huffman n'est pas adapté dans le cas d'une source dont les propriétés statistiques évoluent au cours du temps, puisque les probabilités des symboles se modifient et le codage devient inadapté. La solution consistant à ré-estimer à chaque itération les probabilités symboles est impraticable du fait de sa complexité en temps. La technique devient alors le codage Huffman adaptatif : à chaque nouveau symbole la table des fréquences est remise à jour et l'arbre de codage modifié si nécessaire. Le décompresseur faisant de même pour les mêmes causes… il reste synchronisé sur ce qu'avait fait le compresseur.
+
+En pratique, lorsque l'on veut s'approcher de l'entropie, on préfèrera un codage arithmétique qui est optimal au niveau du bit.
+
+Des méthodes plus complexes réalisant une modélisation probabiliste de la source et tirant profit de cette redondance supplémentaire permettent d'améliorer les performances de compression de cet algorithme (voir LZ77, prédiction par reconnaissance partielle, pondération de contextes).
+Code canonique
+
+Pour un même ensemble de symboles à coder, plusieurs codes de Huffman différents peuvent être obtenus.
+
+Il est possible de transformer un code de Huffman en un code de Huffman canonique qui est unique pour un ensemble de symboles d'entrée donné. Le principe est d'ordonner au départ les symboles dans l'ordre lexical.
+
+Remarque: entre deux symboles S1 et S2 qui, dans un code de Huffman spécifique, sont codés de la même longueur sont toujours codés de la même longueur dans le code Huffman canonique. Dans le cas où deux symboles ont la même probabilité et deux longueurs de code différentes, il est possible que le passage d'un code de Huffman à un code de Huffman canonique modifie la longueur de ces codes, afin de garantir l'attribution du code le plus court au premier symbole dans l'ordre lexicographique.
+Cette section est vide, insuffisamment détaillée ou incomplète. Votre aide est la bienvenue ! Comment faire ?
+Utilisations
+
+Le codage de Huffman ne se base que sur la fréquence relative des symboles d'entrée (suites de bits) sans distinction pour leur provenance (images, vidéos, sons, etc.). C'est pourquoi il est en général utilisé au second étage de compression, une fois la redondance propre au média mise en évidence par d'autres algorithmes. On pense en particulier à la compression JPEG pour les images, MPEG pour les vidéos et MP3 pour le son, qui peuvent retirer les éléments superflus imperceptibles pour les humains. On parle alors de compression non conservative (avec pertes).
+
+D'autres algorithmes de compression, dits conservatifs (sans pertes), tels que ceux utilisés pour la compression de fichiers, utilisent également Huffman pour comprimer le dictionnaire résultant. Par exemple, LZH (Lha) et deflate (ZIP, gzip, PNG) combinent un algorithme de compression par dictionnaire (LZ77) et un codage entropique de Huffman.
+Histoire
+
+Le codage a été inventé par David Albert Huffman, lors de sa thèse de doctorat au MIT. L'algorithme a été publié en 1952 dans l'article A Method for the Construction of Minimum-Redundancy Codes, dans les Proceedings of the Institute of Radio Engineers3.
+
+Les premiers Macintosh de la société Apple utilisaient un code inspiré de Huffman pour la représentation des textes : les 15 caractères les plus fréquents d'une langue étaient codés sur 4 bits, et la 16e configuration servait de préfixe au codage des autres sur un octet (ce qui faisait donc tantôt 4 bits, tantôt 12 bits par caractère voir UTF-8). Cette méthode simple se révélait économiser 30 % d'espace sur un texte moyen, à une époque où la mémoire vive restait encore un composant coûteux.
+Voir aussi
+Articles connexes
+
+    Codage entropique
+    Codage de Shannon-Fano, similaire au codage de Huffman mais où la méthode de calcul des codes diffère et peut aboutir à un arbre de codage différent.
+    Compression de données
+
+Liens externes
+
+    Generateur interactif de l'arbre de Huffman [archive]
+    Generateur visuel de l'arbre d'Huffman [archive]
+
+Bibliographie
+
+    (en) D.A. Huffman, "A method for the construction of minimum-redundancy codes [archive]" (PDF), Proceedings of the I.R.E., septembre 1952, pp 1098-1102
+    (en) Thomas M. Cover, Joy A. Thomas, Elements of Information Theory, Wiley-Interscience, 2006 (ISBN 978-0-471-24195-9) [détail des éditions]
+
+Notes et références
+
+    (en) Cet article est partiellement ou en totalité issu de l’article de Wikipédia en anglais intitulé « Huffman coding » (voir la liste des auteurs).
+
+Mark Nelson (trad. Soulard Hervé), La Compression des données : Texte, Images, Sons, France, Dunod, 1993, 420 p. (ISBN 2-10-001681-4), page 65.
+Cover, Thomas (2006), p. 123-127.
+
+    D.A. Huffman, A method for the construction of minimum-redundancy codes, Proceedings of the I.R.E., septembre 1952, pp. 1098-1102.
+
+ [masquer]
+v · m
+Techniques de compression de données
+Sans perte 	
+Codage entropique 	
+
+    Unaire Binaire tronqué Gamma Delta Omega Zeta Fibonacci Levenshtein Even-Rodeh Stout Golomb Rice Exp-Golomb Shannon-Fano Huffman Shannon-Fano-Elias (en) Arithmétique Par intervalle
+
+Dictionnaire 	
+
+    LZ77 et LZ78 LZSS Lempel-Ziv-Welch Lempel-Ziv-Oberhumer
+
+Modélisation de contextes 	
+
+    Modélisation de Markov dynamique (DMC) Prédiction par reconnaissance partielle (PPM) Pondération de contextes (CM) Pondération de contextes arborescents (en) (CTW)
+
+Techniques hybrides 	
+
+    Implode Deflate LZP LZMA ROLZ
+
+Autres 	Codage par plages
+Transformations 	
+
+    Codage différentiel (Delta) Transformée en étoile Move-to-front (MTF) Transformée de Burrows-Wheeler (BWT) Transformée par substitution de mots (WRT) BCJ2
+
+Formats de fichiers 	
+
+    7z ACE ARC ARJ B1 bzip2 CAB gzip LHA / LZH RAR UHA XZ Z Zip
+
+Avec pertes 	
+Codage par transformation 	Compression par ondelettes
+Autres 	
+
+    Modulation par impulsions et codage différentiel adaptatif (ADPCM) Compression fractale
+
+Transformations 	
+
+    Transformée de Karhunen-Loève (KLT) Transformée en cosinus discrète (DCT) Transformation de Fourier discrète (DFT) Transformée en ondelettes discrète (DWT)
+
+    icône décorative Portail de l'informatique théorique 
+
+Catégories :
+
+    Codage entropiqueCode préfixe
+
+[+]
+
+    La dernière modification de cette page a été faite le 3 juin 2021 à 11:08.
+    Droit d'auteur : les textes sont disponibles sous licence Creative Commons attribution, partage dans les mêmes conditions ; d’autres conditions peuvent s’appliquer. Voyez les conditions d’utilisation pour plus de détails, ainsi que les crédits graphiques. En cas de réutilisation des textes de cette page, voyez comment citer les auteurs et mentionner la licence.
+    Wikipedia® est une marque déposée de la Wikimedia Foundation, Inc., organisation de bienfaisance régie par le paragraphe 501(c)(3) du code fiscal des États-Unis.
+
+    Politique de confidentialité
+    À propos de Wikipédia
+    Avertissements
+    Contact
+    Version mobile
+    Développeurs
+    Statistiques
+    Déclaration sur les témoins (cookies)
+
+    Wikimedia Foundation
+    Powered by MediaWiki
+
+
+
+Aller au contenu
+Afficher / masquer la barre latérale
+Wikipédia l'encyclopédie libre
+Rechercher
+
+    Créer un compte
+
+Outils personnels
+
+    Article
+    Discussion
+
+    Lire
+    Modifier
+    Modifier le code
+    Voir l’historique
+
+    Accueil
+    Portails thématiques
+    Article au hasard
+    Contact
+
+Contribuer
+
+    Débuter sur Wikipédia
+    Aide
+    Communauté
+    Modifications récentes
+    Faire un don
+
+Outils
+
+    Pages liées
+    Suivi des pages liées
+    Téléverser un fichier
+    Pages spéciales
+    Lien permanent
+    Informations sur la page
+    Citer cette page
+    Élément Wikidata
+    Modifier les liens interlangues
+
+Imprimer / exporter
+
+    Créer un livre
+    Télécharger comme PDF
+    Version imprimable
+
+Dans d’autres projets
+
+    Wikimedia Commons
+
+Langues
+Sur cette version linguistique de Wikipédia, les liens interlangues sont placés en haut à droite du titre de l’article.
+Aller en haut.
+Codage de Huffman
+Page d’aide sur l’homonymie
+
+Pour les articles homonymes, voir Huffman.
+
+Le codage de Huffman est un algorithme de compression de données sans perte. Le codage de Huffman utilise un code à longueur variable pour représenter un symbole de la source (par exemple un caractère dans un fichier). Le code est déterminé à partir d'une estimation des probabilités d'apparition des symboles de source, un code court étant associé aux symboles de source les plus fréquents.
+
+Un code de Huffman est optimal au sens de la plus courte longueur pour un codage par symbole, et une distribution de probabilité connue. Des méthodes plus complexes réalisant une modélisation probabiliste de la source permettent d'obtenir de meilleurs ratios de compression.
+
+Il a été inventé par David Albert Huffman, et publié en 1952.
+Sommaire
+
+    1 Principe
+    2 Différentes méthodes de construction de l'arbre
+    3 Propriétés
+    4 Limitations du codage de Huffman
+    5 Code canonique
+    6 Utilisations
+    7 Histoire
+    8 Voir aussi
+        8.1 Articles connexes
+        8.2 Liens externes
+    9 Bibliographie
+    10 Notes et références
+
+Principe
+
+Le principe du codage de Huffman repose sur la création d'une structure d'arbre composée de nœuds.
+
+Supposons que la phrase à coder est « this is an example of a huffman tree ». On recherche tout d'abord le nombre d'occurrences de chaque caractère. Dans l'exemple précédent, la phrase contient 2 fois le caractère h et 7 espaces. Chaque caractère constitue une des feuilles de l'arbre à laquelle on associe un poids égal à son nombre d'occurrences.
+
+L'arbre est créé de la manière suivante, on associe chaque fois les deux nœuds de plus faibles poids, pour donner un nouveau nœud dont le poids équivaut à la somme des poids de ses fils. On réitère ce processus jusqu'à n'en avoir plus qu'un seul nœud : la racine. On associe ensuite par exemple le code 0 à chaque embranchement partant vers la gauche et le code 1 vers la droite.
+Un exemple d'arbre de Huffman, généré avec la phrase « this is an example of a huffman tree ».
+
+Pour obtenir le code binaire de chaque caractère, on remonte l'arbre à partir de la racine jusqu'aux feuilles en rajoutant à chaque fois au code un 0 ou un 1 selon la branche suivie. La phrase « this is an example of a huffman tree » se code alors sur 135 bits au lieu de 288 bits (si le codage initial des caractères tient sur 8 bits). Il est nécessaire de partir de la racine pour obtenir les codes binaires car sinon lors de la décompression, partir des feuilles peut entraîner une confusion lors du décodage.
+
+Pour coder « Wikipedia », nous obtenons donc en binaire : 101 11 011 11 100 010 001 11 000, soit 24 bits au lieu de 63 (9 caractères x 7 bits par caractère) en utilisant les codes ASCII (7 bits).
+Différentes méthodes de construction de l'arbre
+
+Il existe trois variantes de l'algorithme de Huffman, chacune d'elles définissant une méthode pour la création de l'arbre :
+
+    statique : chaque octet a un code prédéfini par le logiciel. L'arbre n'a pas besoin d'être transmis, mais la compression ne peut s'effectuer que sur un seul type de fichier (ex. : un texte en français, où les fréquences d'apparition du 'e' sont énormes ; celui-ci aura donc un code très court, rappelant l'alphabet morse) ;
+    semi-adaptatif : le fichier est d'abord lu, de manière à calculer les occurrences de chaque octet, puis l'arbre est construit à partir des poids de chaque octet. Cet arbre restera le même jusqu'à la fin de la compression. Cette compression occasionnera un gain de bits supérieur ou égal au codage de Huffman statique mais il sera nécessaire, pour la décompression, de transmettre l'arbre, ce qui annulera généralement le gain obtenu1 ;
+    adaptatif : c'est la méthode qui offre a priori les meilleurs taux de compression car il utilise un arbre connu (et ainsi non transmis) qui sera ensuite modifié de manière dynamique au fur et à mesure de la compression du flux selon les symboles précédemment rencontrés1. Cette méthode représente cependant le gros désavantage de devoir modifier souvent l'arbre, ce qui implique un temps d'exécution plus long. Par contre, la compression est toujours optimale et il n'est pas nécessaire que le fichier soit connu avant de compresser. En particulier, l'algorithme est capable de travailler sur des flux de données (streaming), car il n'est pas nécessaire de connaître les symboles à venir.
+
+Propriétés
+
+Un code de Huffman est un code de source. Pour une source S {\displaystyle S} S, représentée par une variable aléatoire X {\displaystyle X} X, de distribution de probabilité p {\displaystyle p} p, l'espérance de la longueur d'un code C {\displaystyle C} C est donnée par
+L ( C ) = ∑ x ∈ Ω p ( x ) ⋅ l ( x ) {\displaystyle L(C)=\sum _{x\in \Omega }p(x)\cdot l(x)} L(C)=\sum_{x \in \Omega}p(x) \cdot l(x)
+
+Où l ( x ) {\displaystyle l(x)} l(x) est la longueur du mot de code, C ( x ) {\displaystyle C(x)} C(x) le code associé au symbole de source x {\displaystyle x} x, et Ω {\displaystyle \Omega } \Omega est l'ensemble des symboles de source.
+
+Un code de Huffman est un code préfixe à longueur variable. Il est optimal, au sens de la plus courte longueur, pour un codage par symbole2. C'est-à-dire que pour un code de Huffman C ∗ {\displaystyle C^{*}} C^*, et pour tout code C {\displaystyle C} C uniquement décodable, alors :
+L ( C ∗ ) ≤ L ( C ) {\displaystyle L(C^{*})\leq L(C)} L(C^*) \le L(C)
+Limitations du codage de Huffman
+
+On peut montrer que pour une source X {\displaystyle X} X, d'entropie de Shannon H ( X ) {\displaystyle H(X)} H(X) la longueur moyenne L {\displaystyle L} L d'un mot de code obtenu par codage de Huffman vérifie:
+H ( X ) ≤ L < H ( X ) + 1 {\displaystyle H(X)\leq L<H(X)+1} H(X) \le L < H(X)+1
+
+Cette relation montre que le codage de Huffman s'approche de l'entropie de la source et c'est-à-dire du code optimum mais cela peut s'avérer en fait assez peu intéressant dans le cas où l'entropie de la source est forte, et où un surcoût de 1 bit devient important. De plus le codage de Huffman impose d'utiliser un nombre entier de bit pour un symbole source, ce qui peut s'avérer peu efficace.
+
+Une solution à ce problème est de travailler sur des blocs de n {\displaystyle n} n symboles. On montre alors qu'on peut s'approcher de façon plus fine de l'entropie :
+H ( X ) ≤ L < H ( X ) + 1 n {\displaystyle H(X)\leq L<H(X)+{\frac {1}{n}}} H(X) \le L < H(X)+\frac{1}{n}
+
+mais le processus d'estimation des probabilités devient plus complexe et coûteux.
+
+De plus, le codage de Huffman n'est pas adapté dans le cas d'une source dont les propriétés statistiques évoluent au cours du temps, puisque les probabilités des symboles se modifient et le codage devient inadapté. La solution consistant à ré-estimer à chaque itération les probabilités symboles est impraticable du fait de sa complexité en temps. La technique devient alors le codage Huffman adaptatif : à chaque nouveau symbole la table des fréquences est remise à jour et l'arbre de codage modifié si nécessaire. Le décompresseur faisant de même pour les mêmes causes… il reste synchronisé sur ce qu'avait fait le compresseur.
+
+En pratique, lorsque l'on veut s'approcher de l'entropie, on préfèrera un codage arithmétique qui est optimal au niveau du bit.
+
+Des méthodes plus complexes réalisant une modélisation probabiliste de la source et tirant profit de cette redondance supplémentaire permettent d'améliorer les performances de compression de cet algorithme (voir LZ77, prédiction par reconnaissance partielle, pondération de contextes).
+Code canonique
+
+Pour un même ensemble de symboles à coder, plusieurs codes de Huffman différents peuvent être obtenus.
+
+Il est possible de transformer un code de Huffman en un code de Huffman canonique qui est unique pour un ensemble de symboles d'entrée donné. Le principe est d'ordonner au départ les symboles dans l'ordre lexical.
+
+Remarque: entre deux symboles S1 et S2 qui, dans un code de Huffman spécifique, sont codés de la même longueur sont toujours codés de la même longueur dans le code Huffman canonique. Dans le cas où deux symboles ont la même probabilité et deux longueurs de code différentes, il est possible que le passage d'un code de Huffman à un code de Huffman canonique modifie la longueur de ces codes, afin de garantir l'attribution du code le plus court au premier symbole dans l'ordre lexicographique.
+Cette section est vide, insuffisamment détaillée ou incomplète. Votre aide est la bienvenue ! Comment faire ?
+Utilisations
+
+Le codage de Huffman ne se base que sur la fréquence relative des symboles d'entrée (suites de bits) sans distinction pour leur provenance (images, vidéos, sons, etc.). C'est pourquoi il est en général utilisé au second étage de compression, une fois la redondance propre au média mise en évidence par d'autres algorithmes. On pense en particulier à la compression JPEG pour les images, MPEG pour les vidéos et MP3 pour le son, qui peuvent retirer les éléments superflus imperceptibles pour les humains. On parle alors de compression non conservative (avec pertes).
+
+D'autres algorithmes de compression, dits conservatifs (sans pertes), tels que ceux utilisés pour la compression de fichiers, utilisent également Huffman pour comprimer le dictionnaire résultant. Par exemple, LZH (Lha) et deflate (ZIP, gzip, PNG) combinent un algorithme de compression par dictionnaire (LZ77) et un codage entropique de Huffman.
+Histoire
+
+Le codage a été inventé par David Albert Huffman, lors de sa thèse de doctorat au MIT. L'algorithme a été publié en 1952 dans l'article A Method for the Construction of Minimum-Redundancy Codes, dans les Proceedings of the Institute of Radio Engineers3.
+
+Les premiers Macintosh de la société Apple utilisaient un code inspiré de Huffman pour la représentation des textes : les 15 caractères les plus fréquents d'une langue étaient codés sur 4 bits, et la 16e configuration servait de préfixe au codage des autres sur un octet (ce qui faisait donc tantôt 4 bits, tantôt 12 bits par caractère voir UTF-8). Cette méthode simple se révélait économiser 30 % d'espace sur un texte moyen, à une époque où la mémoire vive restait encore un composant coûteux.
+Voir aussi
+Articles connexes
+
+    Codage entropique
+    Codage de Shannon-Fano, similaire au codage de Huffman mais où la méthode de calcul des codes diffère et peut aboutir à un arbre de codage différent.
+    Compression de données
+
+Liens externes
+
+    Generateur interactif de l'arbre de Huffman [archive]
+    Generateur visuel de l'arbre d'Huffman [archive]
+
+Bibliographie
+
+    (en) D.A. Huffman, "A method for the construction of minimum-redundancy codes [archive]" (PDF), Proceedings of the I.R.E., septembre 1952, pp 1098-1102
+    (en) Thomas M. Cover, Joy A. Thomas, Elements of Information Theory, Wiley-Interscience, 2006 (ISBN 978-0-471-24195-9) [détail des éditions]
+
+Notes et références
+
+    (en) Cet article est partiellement ou en totalité issu de l’article de Wikipédia en anglais intitulé « Huffman coding » (voir la liste des auteurs).
+
+Mark Nelson (trad. Soulard Hervé), La Compression des données : Texte, Images, Sons, France, Dunod, 1993, 420 p. (ISBN 2-10-001681-4), page 65.
+Cover, Thomas (2006), p. 123-127.
+
+    D.A. Huffman, A method for the construction of minimum-redundancy codes, Proceedings of the I.R.E., septembre 1952, pp. 1098-1102.
+
+ [masquer]
+v · m
+Techniques de compression de données
+Sans perte 	
+Codage entropique 	
+
+    Unaire Binaire tronqué Gamma Delta Omega Zeta Fibonacci Levenshtein Even-Rodeh Stout Golomb Rice Exp-Golomb Shannon-Fano Huffman Shannon-Fano-Elias (en) Arithmétique Par intervalle
+
+Dictionnaire 	
+
+    LZ77 et LZ78 LZSS Lempel-Ziv-Welch Lempel-Ziv-Oberhumer
+
+Modélisation de contextes 	
+
+    Modélisation de Markov dynamique (DMC) Prédiction par reconnaissance partielle (PPM) Pondération de contextes (CM) Pondération de contextes arborescents (en) (CTW)
+
+Techniques hybrides 	
+
+    Implode Deflate LZP LZMA ROLZ
+
+Autres 	Codage par plages
+Transformations 	
+
+    Codage différentiel (Delta) Transformée en étoile Move-to-front (MTF) Transformée de Burrows-Wheeler (BWT) Transformée par substitution de mots (WRT) BCJ2
+
+Formats de fichiers 	
+
+    7z ACE ARC ARJ B1 bzip2 CAB gzip LHA / LZH RAR UHA XZ Z Zip
+
+Avec pertes 	
+Codage par transformation 	Compression par ondelettes
+Autres 	
+
+    Modulation par impulsions et codage différentiel adaptatif (ADPCM) Compression fractale
+
+Transformations 	
+
+    Transformée de Karhunen-Loève (KLT) Transformée en cosinus discrète (DCT) Transformation de Fourier discrète (DFT) Transformée en ondelettes discrète (DWT)
+
+    icône décorative Portail de l'informatique théorique 
+
+Catégories :
+
+    Codage entropiqueCode préfixe
+
+[+]
+
+    La dernière modification de cette page a été faite le 3 juin 2021 à 11:08.
+    Droit d'auteur : les textes sont disponibles sous licence Creative Commons attribution, partage dans les mêmes conditions ; d’autres conditions peuvent s’appliquer. Voyez les conditions d’utilisation pour plus de détails, ainsi que les crédits graphiques. En cas de réutilisation des textes de cette page, voyez comment citer les auteurs et mentionner la licence.
+    Wikipedia® est une marque déposée de la Wikimedia Foundation, Inc., organisation de bienfaisance régie par le paragraphe 501(c)(3) du code fiscal des États-Unis.
+
+    Politique de confidentialité
+    À propos de Wikipédia
+    Avertissements
+    Contact
+    Version mobile
+    Développeurs
+    Statistiques
+    Déclaration sur les témoins (cookies)
+
+    Wikimedia Foundation
+    Powered by MediaWiki
+
+
+
+Aller au contenu
+Afficher / masquer la barre latérale
+Wikipédia l'encyclopédie libre
+Rechercher
+
+    Créer un compte
+
+Outils personnels
+
+    Article
+    Discussion
+
+    Lire
+    Modifier
+    Modifier le code
+    Voir l’historique
+
+    Accueil
+    Portails thématiques
+    Article au hasard
+    Contact
+
+Contribuer
+
+    Débuter sur Wikipédia
+    Aide
+    Communauté
+    Modifications récentes
+    Faire un don
+
+Outils
+
+    Pages liées
+    Suivi des pages liées
+    Téléverser un fichier
+    Pages spéciales
+    Lien permanent
+    Informations sur la page
+    Citer cette page
+    Élément Wikidata
+    Modifier les liens interlangues
+
+Imprimer / exporter
+
+    Créer un livre
+    Télécharger comme PDF
+    Version imprimable
+
+Dans d’autres projets
+
+    Wikimedia Commons
+
+Langues
+Sur cette version linguistique de Wikipédia, les liens interlangues sont placés en haut à droite du titre de l’article.
+Aller en haut.
+Codage de Huffman
+Page d’aide sur l’homonymie
+
+Pour les articles homonymes, voir Huffman.
+
+Le codage de Huffman est un algorithme de compression de données sans perte. Le codage de Huffman utilise un code à longueur variable pour représenter un symbole de la source (par exemple un caractère dans un fichier). Le code est déterminé à partir d'une estimation des probabilités d'apparition des symboles de source, un code court étant associé aux symboles de source les plus fréquents.
+
+Un code de Huffman est optimal au sens de la plus courte longueur pour un codage par symbole, et une distribution de probabilité connue. Des méthodes plus complexes réalisant une modélisation probabiliste de la source permettent d'obtenir de meilleurs ratios de compression.
+
+Il a été inventé par David Albert Huffman, et publié en 1952.
+Sommaire
+
+    1 Principe
+    2 Différentes méthodes de construction de l'arbre
+    3 Propriétés
+    4 Limitations du codage de Huffman
+    5 Code canonique
+    6 Utilisations
+    7 Histoire
+    8 Voir aussi
+        8.1 Articles connexes
+        8.2 Liens externes
+    9 Bibliographie
+    10 Notes et références
+
+Principe
+
+Le principe du codage de Huffman repose sur la création d'une structure d'arbre composée de nœuds.
+
+Supposons que la phrase à coder est « this is an example of a huffman tree ». On recherche tout d'abord le nombre d'occurrences de chaque caractère. Dans l'exemple précédent, la phrase contient 2 fois le caractère h et 7 espaces. Chaque caractère constitue une des feuilles de l'arbre à laquelle on associe un poids égal à son nombre d'occurrences.
+
+L'arbre est créé de la manière suivante, on associe chaque fois les deux nœuds de plus faibles poids, pour donner un nouveau nœud dont le poids équivaut à la somme des poids de ses fils. On réitère ce processus jusqu'à n'en avoir plus qu'un seul nœud : la racine. On associe ensuite par exemple le code 0 à chaque embranchement partant vers la gauche et le code 1 vers la droite.
+Un exemple d'arbre de Huffman, généré avec la phrase « this is an example of a huffman tree ».
+
+Pour obtenir le code binaire de chaque caractère, on remonte l'arbre à partir de la racine jusqu'aux feuilles en rajoutant à chaque fois au code un 0 ou un 1 selon la branche suivie. La phrase « this is an example of a huffman tree » se code alors sur 135 bits au lieu de 288 bits (si le codage initial des caractères tient sur 8 bits). Il est nécessaire de partir de la racine pour obtenir les codes binaires car sinon lors de la décompression, partir des feuilles peut entraîner une confusion lors du décodage.
+
+Pour coder « Wikipedia », nous obtenons donc en binaire : 101 11 011 11 100 010 001 11 000, soit 24 bits au lieu de 63 (9 caractères x 7 bits par caractère) en utilisant les codes ASCII (7 bits).
+Différentes méthodes de construction de l'arbre
+
+Il existe trois variantes de l'algorithme de Huffman, chacune d'elles définissant une méthode pour la création de l'arbre :
+
+    statique : chaque octet a un code prédéfini par le logiciel. L'arbre n'a pas besoin d'être transmis, mais la compression ne peut s'effectuer que sur un seul type de fichier (ex. : un texte en français, où les fréquences d'apparition du 'e' sont énormes ; celui-ci aura donc un code très court, rappelant l'alphabet morse) ;
+    semi-adaptatif : le fichier est d'abord lu, de manière à calculer les occurrences de chaque octet, puis l'arbre est construit à partir des poids de chaque octet. Cet arbre restera le même jusqu'à la fin de la compression. Cette compression occasionnera un gain de bits supérieur ou égal au codage de Huffman statique mais il sera nécessaire, pour la décompression, de transmettre l'arbre, ce qui annulera généralement le gain obtenu1 ;
+    adaptatif : c'est la méthode qui offre a priori les meilleurs taux de compression car il utilise un arbre connu (et ainsi non transmis) qui sera ensuite modifié de manière dynamique au fur et à mesure de la compression du flux selon les symboles précédemment rencontrés1. Cette méthode représente cependant le gros désavantage de devoir modifier souvent l'arbre, ce qui implique un temps d'exécution plus long. Par contre, la compression est toujours optimale et il n'est pas nécessaire que le fichier soit connu avant de compresser. En particulier, l'algorithme est capable de travailler sur des flux de données (streaming), car il n'est pas nécessaire de connaître les symboles à venir.
+
+Propriétés
+
+Un code de Huffman est un code de source. Pour une source S {\displaystyle S} S, représentée par une variable aléatoire X {\displaystyle X} X, de distribution de probabilité p {\displaystyle p} p, l'espérance de la longueur d'un code C {\displaystyle C} C est donnée par
+L ( C ) = ∑ x ∈ Ω p ( x ) ⋅ l ( x ) {\displaystyle L(C)=\sum _{x\in \Omega }p(x)\cdot l(x)} L(C)=\sum_{x \in \Omega}p(x) \cdot l(x)
+
+Où l ( x ) {\displaystyle l(x)} l(x) est la longueur du mot de code, C ( x ) {\displaystyle C(x)} C(x) le code associé au symbole de source x {\displaystyle x} x, et Ω {\displaystyle \Omega } \Omega est l'ensemble des symboles de source.
+
+Un code de Huffman est un code préfixe à longueur variable. Il est optimal, au sens de la plus courte longueur, pour un codage par symbole2. C'est-à-dire que pour un code de Huffman C ∗ {\displaystyle C^{*}} C^*, et pour tout code C {\displaystyle C} C uniquement décodable, alors :
+L ( C ∗ ) ≤ L ( C ) {\displaystyle L(C^{*})\leq L(C)} L(C^*) \le L(C)
+Limitations du codage de Huffman
+
+On peut montrer que pour une source X {\displaystyle X} X, d'entropie de Shannon H ( X ) {\displaystyle H(X)} H(X) la longueur moyenne L {\displaystyle L} L d'un mot de code obtenu par codage de Huffman vérifie:
+H ( X ) ≤ L < H ( X ) + 1 {\displaystyle H(X)\leq L<H(X)+1} H(X) \le L < H(X)+1
+
+Cette relation montre que le codage de Huffman s'approche de l'entropie de la source et c'est-à-dire du code optimum mais cela peut s'avérer en fait assez peu intéressant dans le cas où l'entropie de la source est forte, et où un surcoût de 1 bit devient important. De plus le codage de Huffman impose d'utiliser un nombre entier de bit pour un symbole source, ce qui peut s'avérer peu efficace.
+
+Une solution à ce problème est de travailler sur des blocs de n {\displaystyle n} n symboles. On montre alors qu'on peut s'approcher de façon plus fine de l'entropie :
+H ( X ) ≤ L < H ( X ) + 1 n {\displaystyle H(X)\leq L<H(X)+{\frac {1}{n}}} H(X) \le L < H(X)+\frac{1}{n}
+
+mais le processus d'estimation des probabilités devient plus complexe et coûteux.
+
+De plus, le codage de Huffman n'est pas adapté dans le cas d'une source dont les propriétés statistiques évoluent au cours du temps, puisque les probabilités des symboles se modifient et le codage devient inadapté. La solution consistant à ré-estimer à chaque itération les probabilités symboles est impraticable du fait de sa complexité en temps. La technique devient alors le codage Huffman adaptatif : à chaque nouveau symbole la table des fréquences est remise à jour et l'arbre de codage modifié si nécessaire. Le décompresseur faisant de même pour les mêmes causes… il reste synchronisé sur ce qu'avait fait le compresseur.
+
+En pratique, lorsque l'on veut s'approcher de l'entropie, on préfèrera un codage arithmétique qui est optimal au niveau du bit.
+
+Des méthodes plus complexes réalisant une modélisation probabiliste de la source et tirant profit de cette redondance supplémentaire permettent d'améliorer les performances de compression de cet algorithme (voir LZ77, prédiction par reconnaissance partielle, pondération de contextes).
+Code canonique
+
+Pour un même ensemble de symboles à coder, plusieurs codes de Huffman différents peuvent être obtenus.
+
+Il est possible de transformer un code de Huffman en un code de Huffman canonique qui est unique pour un ensemble de symboles d'entrée donné. Le principe est d'ordonner au départ les symboles dans l'ordre lexical.
+
+Remarque: entre deux symboles S1 et S2 qui, dans un code de Huffman spécifique, sont codés de la même longueur sont toujours codés de la même longueur dans le code Huffman canonique. Dans le cas où deux symboles ont la même probabilité et deux longueurs de code différentes, il est possible que le passage d'un code de Huffman à un code de Huffman canonique modifie la longueur de ces codes, afin de garantir l'attribution du code le plus court au premier symbole dans l'ordre lexicographique.
+Cette section est vide, insuffisamment détaillée ou incomplète. Votre aide est la bienvenue ! Comment faire ?
+Utilisations
+
+Le codage de Huffman ne se base que sur la fréquence relative des symboles d'entrée (suites de bits) sans distinction pour leur provenance (images, vidéos, sons, etc.). C'est pourquoi il est en général utilisé au second étage de compression, une fois la redondance propre au média mise en évidence par d'autres algorithmes. On pense en particulier à la compression JPEG pour les images, MPEG pour les vidéos et MP3 pour le son, qui peuvent retirer les éléments superflus imperceptibles pour les humains. On parle alors de compression non conservative (avec pertes).
+
+D'autres algorithmes de compression, dits conservatifs (sans pertes), tels que ceux utilisés pour la compression de fichiers, utilisent également Huffman pour comprimer le dictionnaire résultant. Par exemple, LZH (Lha) et deflate (ZIP, gzip, PNG) combinent un algorithme de compression par dictionnaire (LZ77) et un codage entropique de Huffman.
+Histoire
+
+Le codage a été inventé par David Albert Huffman, lors de sa thèse de doctorat au MIT. L'algorithme a été publié en 1952 dans l'article A Method for the Construction of Minimum-Redundancy Codes, dans les Proceedings of the Institute of Radio Engineers3.
+
+Les premiers Macintosh de la société Apple utilisaient un code inspiré de Huffman pour la représentation des textes : les 15 caractères les plus fréquents d'une langue étaient codés sur 4 bits, et la 16e configuration servait de préfixe au codage des autres sur un octet (ce qui faisait donc tantôt 4 bits, tantôt 12 bits par caractère voir UTF-8). Cette méthode simple se révélait économiser 30 % d'espace sur un texte moyen, à une époque où la mémoire vive restait encore un composant coûteux.
+Voir aussi
+Articles connexes
+
+    Codage entropique
+    Codage de Shannon-Fano, similaire au codage de Huffman mais où la méthode de calcul des codes diffère et peut aboutir à un arbre de codage différent.
+    Compression de données
+
+Liens externes
+
+    Generateur interactif de l'arbre de Huffman [archive]
+    Generateur visuel de l'arbre d'Huffman [archive]
+
+Bibliographie
+
+    (en) D.A. Huffman, "A method for the construction of minimum-redundancy codes [archive]" (PDF), Proceedings of the I.R.E., septembre 1952, pp 1098-1102
+    (en) Thomas M. Cover, Joy A. Thomas, Elements of Information Theory, Wiley-Interscience, 2006 (ISBN 978-0-471-24195-9) [détail des éditions]
+
+Notes et références
+
+    (en) Cet article est partiellement ou en totalité issu de l’article de Wikipédia en anglais intitulé « Huffman coding » (voir la liste des auteurs).
+
+Mark Nelson (trad. Soulard Hervé), La Compression des données : Texte, Images, Sons, France, Dunod, 1993, 420 p. (ISBN 2-10-001681-4), page 65.
+Cover, Thomas (2006), p. 123-127.
+
+    D.A. Huffman, A method for the construction of minimum-redundancy codes, Proceedings of the I.R.E., septembre 1952, pp. 1098-1102.
+
+ [masquer]
+v · m
+Techniques de compression de données
+Sans perte 	
+Codage entropique 	
+
+    Unaire Binaire tronqué Gamma Delta Omega Zeta Fibonacci Levenshtein Even-Rodeh Stout Golomb Rice Exp-Golomb Shannon-Fano Huffman Shannon-Fano-Elias (en) Arithmétique Par intervalle
+
+Dictionnaire 	
+
+    LZ77 et LZ78 LZSS Lempel-Ziv-Welch Lempel-Ziv-Oberhumer
+
+Modélisation de contextes 	
+
+    Modélisation de Markov dynamique (DMC) Prédiction par reconnaissance partielle (PPM) Pondération de contextes (CM) Pondération de contextes arborescents (en) (CTW)
+
+Techniques hybrides 	
+
+    Implode Deflate LZP LZMA ROLZ
+
+Autres 	Codage par plages
+Transformations 	
+
+    Codage différentiel (Delta) Transformée en étoile Move-to-front (MTF) Transformée de Burrows-Wheeler (BWT) Transformée par substitution de mots (WRT) BCJ2
+
+Formats de fichiers 	
+
+    7z ACE ARC ARJ B1 bzip2 CAB gzip LHA / LZH RAR UHA XZ Z Zip
+
+Avec pertes 	
+Codage par transformation 	Compression par ondelettes
+Autres 	
+
+    Modulation par impulsions et codage différentiel adaptatif (ADPCM) Compression fractale
+
+Transformations 	
+
+    Transformée de Karhunen-Loève (KLT) Transformée en cosinus discrète (DCT) Transformation de Fourier discrète (DFT) Transformée en ondelettes discrète (DWT)
+
+    icône décorative Portail de l'informatique théorique 
+
+Catégories :
+
+    Codage entropiqueCode préfixe
+
+[+]
+
+    La dernière modification de cette page a été faite le 3 juin 2021 à 11:08.
+    Droit d'auteur : les textes sont disponibles sous licence Creative Commons attribution, partage dans les mêmes conditions ; d’autres conditions peuvent s’appliquer. Voyez les conditions d’utilisation pour plus de détails, ainsi que les crédits graphiques. En cas de réutilisation des textes de cette page, voyez comment citer les auteurs et mentionner la licence.
+    Wikipedia® est une marque déposée de la Wikimedia Foundation, Inc., organisation de bienfaisance régie par le paragraphe 501(c)(3) du code fiscal des États-Unis.
+
+    Politique de confidentialité
+    À propos de Wikipédia
+    Avertissements
+    Contact
+    Version mobile
+    Développeurs
+    Statistiques
+    Déclaration sur les témoins (cookies)
+
+    Wikimedia Foundation
+    Powered by MediaWiki
+
+
+
+Aller au contenu
+Afficher / masquer la barre latérale
+Wikipédia l'encyclopédie libre
+Rechercher
+
+    Créer un compte
+
+Outils personnels
+
+    Article
+    Discussion
+
+    Lire
+    Modifier
+    Modifier le code
+    Voir l’historique
+
+    Accueil
+    Portails thématiques
+    Article au hasard
+    Contact
+
+Contribuer
+
+    Débuter sur Wikipédia
+    Aide
+    Communauté
+    Modifications récentes
+    Faire un don
+
+Outils
+
+    Pages liées
+    Suivi des pages liées
+    Téléverser un fichier
+    Pages spéciales
+    Lien permanent
+    Informations sur la page
+    Citer cette page
+    Élément Wikidata
+    Modifier les liens interlangues
+
+Imprimer / exporter
+
+    Créer un livre
+    Télécharger comme PDF
+    Version imprimable
+
+Dans d’autres projets
+
+    Wikimedia Commons
+
+Langues
+Sur cette version linguistique de Wikipédia, les liens interlangues sont placés en haut à droite du titre de l’article.
+Aller en haut.
+Codage de Huffman
+Page d’aide sur l’homonymie
+
+Pour les articles homonymes, voir Huffman.
+
+Le codage de Huffman est un algorithme de compression de données sans perte. Le codage de Huffman utilise un code à longueur variable pour représenter un symbole de la source (par exemple un caractère dans un fichier). Le code est déterminé à partir d'une estimation des probabilités d'apparition des symboles de source, un code court étant associé aux symboles de source les plus fréquents.
+
+Un code de Huffman est optimal au sens de la plus courte longueur pour un codage par symbole, et une distribution de probabilité connue. Des méthodes plus complexes réalisant une modélisation probabiliste de la source permettent d'obtenir de meilleurs ratios de compression.
+
+Il a été inventé par David Albert Huffman, et publié en 1952.
+Sommaire
+
+    1 Principe
+    2 Différentes méthodes de construction de l'arbre
+    3 Propriétés
+    4 Limitations du codage de Huffman
+    5 Code canonique
+    6 Utilisations
+    7 Histoire
+    8 Voir aussi
+        8.1 Articles connexes
+        8.2 Liens externes
+    9 Bibliographie
+    10 Notes et références
+
+Principe
+
+Le principe du codage de Huffman repose sur la création d'une structure d'arbre composée de nœuds.
+
+Supposons que la phrase à coder est « this is an example of a huffman tree ». On recherche tout d'abord le nombre d'occurrences de chaque caractère. Dans l'exemple précédent, la phrase contient 2 fois le caractère h et 7 espaces. Chaque caractère constitue une des feuilles de l'arbre à laquelle on associe un poids égal à son nombre d'occurrences.
+
+L'arbre est créé de la manière suivante, on associe chaque fois les deux nœuds de plus faibles poids, pour donner un nouveau nœud dont le poids équivaut à la somme des poids de ses fils. On réitère ce processus jusqu'à n'en avoir plus qu'un seul nœud : la racine. On associe ensuite par exemple le code 0 à chaque embranchement partant vers la gauche et le code 1 vers la droite.
+Un exemple d'arbre de Huffman, généré avec la phrase « this is an example of a huffman tree ».
+
+Pour obtenir le code binaire de chaque caractère, on remonte l'arbre à partir de la racine jusqu'aux feuilles en rajoutant à chaque fois au code un 0 ou un 1 selon la branche suivie. La phrase « this is an example of a huffman tree » se code alors sur 135 bits au lieu de 288 bits (si le codage initial des caractères tient sur 8 bits). Il est nécessaire de partir de la racine pour obtenir les codes binaires car sinon lors de la décompression, partir des feuilles peut entraîner une confusion lors du décodage.
+
+Pour coder « Wikipedia », nous obtenons donc en binaire : 101 11 011 11 100 010 001 11 000, soit 24 bits au lieu de 63 (9 caractères x 7 bits par caractère) en utilisant les codes ASCII (7 bits).
+Différentes méthodes de construction de l'arbre
+
+Il existe trois variantes de l'algorithme de Huffman, chacune d'elles définissant une méthode pour la création de l'arbre :
+
+    statique : chaque octet a un code prédéfini par le logiciel. L'arbre n'a pas besoin d'être transmis, mais la compression ne peut s'effectuer que sur un seul type de fichier (ex. : un texte en français, où les fréquences d'apparition du 'e' sont énormes ; celui-ci aura donc un code très court, rappelant l'alphabet morse) ;
+    semi-adaptatif : le fichier est d'abord lu, de manière à calculer les occurrences de chaque octet, puis l'arbre est construit à partir des poids de chaque octet. Cet arbre restera le même jusqu'à la fin de la compression. Cette compression occasionnera un gain de bits supérieur ou égal au codage de Huffman statique mais il sera nécessaire, pour la décompression, de transmettre l'arbre, ce qui annulera généralement le gain obtenu1 ;
+    adaptatif : c'est la méthode qui offre a priori les meilleurs taux de compression car il utilise un arbre connu (et ainsi non transmis) qui sera ensuite modifié de manière dynamique au fur et à mesure de la compression du flux selon les symboles précédemment rencontrés1. Cette méthode représente cependant le gros désavantage de devoir modifier souvent l'arbre, ce qui implique un temps d'exécution plus long. Par contre, la compression est toujours optimale et il n'est pas nécessaire que le fichier soit connu avant de compresser. En particulier, l'algorithme est capable de travailler sur des flux de données (streaming), car il n'est pas nécessaire de connaître les symboles à venir.
+
+Propriétés
+
+Un code de Huffman est un code de source. Pour une source S {\displaystyle S} S, représentée par une variable aléatoire X {\displaystyle X} X, de distribution de probabilité p {\displaystyle p} p, l'espérance de la longueur d'un code C {\displaystyle C} C est donnée par
+L ( C ) = ∑ x ∈ Ω p ( x ) ⋅ l ( x ) {\displaystyle L(C)=\sum _{x\in \Omega }p(x)\cdot l(x)} L(C)=\sum_{x \in \Omega}p(x) \cdot l(x)
+
+Où l ( x ) {\displaystyle l(x)} l(x) est la longueur du mot de code, C ( x ) {\displaystyle C(x)} C(x) le code associé au symbole de source x {\displaystyle x} x, et Ω {\displaystyle \Omega } \Omega est l'ensemble des symboles de source.
+
+Un code de Huffman est un code préfixe à longueur variable. Il est optimal, au sens de la plus courte longueur, pour un codage par symbole2. C'est-à-dire que pour un code de Huffman C ∗ {\displaystyle C^{*}} C^*, et pour tout code C {\displaystyle C} C uniquement décodable, alors :
+L ( C ∗ ) ≤ L ( C ) {\displaystyle L(C^{*})\leq L(C)} L(C^*) \le L(C)
+Limitations du codage de Huffman
+
+On peut montrer que pour une source X {\displaystyle X} X, d'entropie de Shannon H ( X ) {\displaystyle H(X)} H(X) la longueur moyenne L {\displaystyle L} L d'un mot de code obtenu par codage de Huffman vérifie:
+H ( X ) ≤ L < H ( X ) + 1 {\displaystyle H(X)\leq L<H(X)+1} H(X) \le L < H(X)+1
+
+Cette relation montre que le codage de Huffman s'approche de l'entropie de la source et c'est-à-dire du code optimum mais cela peut s'avérer en fait assez peu intéressant dans le cas où l'entropie de la source est forte, et où un surcoût de 1 bit devient important. De plus le codage de Huffman impose d'utiliser un nombre entier de bit pour un symbole source, ce qui peut s'avérer peu efficace.
+
+Une solution à ce problème est de travailler sur des blocs de n {\displaystyle n} n symboles. On montre alors qu'on peut s'approcher de façon plus fine de l'entropie :
+H ( X ) ≤ L < H ( X ) + 1 n {\displaystyle H(X)\leq L<H(X)+{\frac {1}{n}}} H(X) \le L < H(X)+\frac{1}{n}
+
+mais le processus d'estimation des probabilités devient plus complexe et coûteux.
+
+De plus, le codage de Huffman n'est pas adapté dans le cas d'une source dont les propriétés statistiques évoluent au cours du temps, puisque les probabilités des symboles se modifient et le codage devient inadapté. La solution consistant à ré-estimer à chaque itération les probabilités symboles est impraticable du fait de sa complexité en temps. La technique devient alors le codage Huffman adaptatif : à chaque nouveau symbole la table des fréquences est remise à jour et l'arbre de codage modifié si nécessaire. Le décompresseur faisant de même pour les mêmes causes… il reste synchronisé sur ce qu'avait fait le compresseur.
+
+En pratique, lorsque l'on veut s'approcher de l'entropie, on préfèrera un codage arithmétique qui est optimal au niveau du bit.
+
+Des méthodes plus complexes réalisant une modélisation probabiliste de la source et tirant profit de cette redondance supplémentaire permettent d'améliorer les performances de compression de cet algorithme (voir LZ77, prédiction par reconnaissance partielle, pondération de contextes).
+Code canonique
+
+Pour un même ensemble de symboles à coder, plusieurs codes de Huffman différents peuvent être obtenus.
+
+Il est possible de transformer un code de Huffman en un code de Huffman canonique qui est unique pour un ensemble de symboles d'entrée donné. Le principe est d'ordonner au départ les symboles dans l'ordre lexical.
+
+Remarque: entre deux symboles S1 et S2 qui, dans un code de Huffman spécifique, sont codés de la même longueur sont toujours codés de la même longueur dans le code Huffman canonique. Dans le cas où deux symboles ont la même probabilité et deux longueurs de code différentes, il est possible que le passage d'un code de Huffman à un code de Huffman canonique modifie la longueur de ces codes, afin de garantir l'attribution du code le plus court au premier symbole dans l'ordre lexicographique.
+Cette section est vide, insuffisamment détaillée ou incomplète. Votre aide est la bienvenue ! Comment faire ?
+Utilisations
+
+Le codage de Huffman ne se base que sur la fréquence relative des symboles d'entrée (suites de bits) sans distinction pour leur provenance (images, vidéos, sons, etc.). C'est pourquoi il est en général utilisé au second étage de compression, une fois la redondance propre au média mise en évidence par d'autres algorithmes. On pense en particulier à la compression JPEG pour les images, MPEG pour les vidéos et MP3 pour le son, qui peuvent retirer les éléments superflus imperceptibles pour les humains. On parle alors de compression non conservative (avec pertes).
+
+D'autres algorithmes de compression, dits conservatifs (sans pertes), tels que ceux utilisés pour la compression de fichiers, utilisent également Huffman pour comprimer le dictionnaire résultant. Par exemple, LZH (Lha) et deflate (ZIP, gzip, PNG) combinent un algorithme de compression par dictionnaire (LZ77) et un codage entropique de Huffman.
+Histoire
+
+Le codage a été inventé par David Albert Huffman, lors de sa thèse de doctorat au MIT. L'algorithme a été publié en 1952 dans l'article A Method for the Construction of Minimum-Redundancy Codes, dans les Proceedings of the Institute of Radio Engineers3.
+
+Les premiers Macintosh de la société Apple utilisaient un code inspiré de Huffman pour la représentation des textes : les 15 caractères les plus fréquents d'une langue étaient codés sur 4 bits, et la 16e configuration servait de préfixe au codage des autres sur un octet (ce qui faisait donc tantôt 4 bits, tantôt 12 bits par caractère voir UTF-8). Cette méthode simple se révélait économiser 30 % d'espace sur un texte moyen, à une époque où la mémoire vive restait encore un composant coûteux.
+Voir aussi
+Articles connexes
+
+    Codage entropique
+    Codage de Shannon-Fano, similaire au codage de Huffman mais où la méthode de calcul des codes diffère et peut aboutir à un arbre de codage différent.
+    Compression de données
+
+Liens externes
+
+    Generateur interactif de l'arbre de Huffman [archive]
+    Generateur visuel de l'arbre d'Huffman [archive]
+
+Bibliographie
+
+    (en) D.A. Huffman, "A method for the construction of minimum-redundancy codes [archive]" (PDF), Proceedings of the I.R.E., septembre 1952, pp 1098-1102
+    (en) Thomas M. Cover, Joy A. Thomas, Elements of Information Theory, Wiley-Interscience, 2006 (ISBN 978-0-471-24195-9) [détail des éditions]
+
+Notes et références
+
+    (en) Cet article est partiellement ou en totalité issu de l’article de Wikipédia en anglais intitulé « Huffman coding » (voir la liste des auteurs).
+
+Mark Nelson (trad. Soulard Hervé), La Compression des données : Texte, Images, Sons, France, Dunod, 1993, 420 p. (ISBN 2-10-001681-4), page 65.
+Cover, Thomas (2006), p. 123-127.
+
+    D.A. Huffman, A method for the construction of minimum-redundancy codes, Proceedings of the I.R.E., septembre 1952, pp. 1098-1102.
+
+ [masquer]
+v · m
+Techniques de compression de données
+Sans perte 	
+Codage entropique 	
+
+    Unaire Binaire tronqué Gamma Delta Omega Zeta Fibonacci Levenshtein Even-Rodeh Stout Golomb Rice Exp-Golomb Shannon-Fano Huffman Shannon-Fano-Elias (en) Arithmétique Par intervalle
+
+Dictionnaire 	
+
+    LZ77 et LZ78 LZSS Lempel-Ziv-Welch Lempel-Ziv-Oberhumer
+
+Modélisation de contextes 	
+
+    Modélisation de Markov dynamique (DMC) Prédiction par reconnaissance partielle (PPM) Pondération de contextes (CM) Pondération de contextes arborescents (en) (CTW)
+
+Techniques hybrides 	
+
+    Implode Deflate LZP LZMA ROLZ
+
+Autres 	Codage par plages
+Transformations 	
+
+    Codage différentiel (Delta) Transformée en étoile Move-to-front (MTF) Transformée de Burrows-Wheeler (BWT) Transformée par substitution de mots (WRT) BCJ2
+
+Formats de fichiers 	
+
+    7z ACE ARC ARJ B1 bzip2 CAB gzip LHA / LZH RAR UHA XZ Z Zip
+
+Avec pertes 	
+Codage par transformation 	Compression par ondelettes
+Autres 	
+
+    Modulation par impulsions et codage différentiel adaptatif (ADPCM) Compression fractale
+
+Transformations 	
+
+    Transformée de Karhunen-Loève (KLT) Transformée en cosinus discrète (DCT) Transformation de Fourier discrète (DFT) Transformée en ondelettes discrète (DWT)
+
+    icône décorative Portail de l'informatique théorique 
+
+Catégories :
+
+    Codage entropiqueCode préfixe
+
+[+]
+
+    La dernière modification de cette page a été faite le 3 juin 2021 à 11:08.
+    Droit d'auteur : les textes sont disponibles sous licence Creative Commons attribution, partage dans les mêmes conditions ; d’autres conditions peuvent s’appliquer. Voyez les conditions d’utilisation pour plus de détails, ainsi que les crédits graphiques. En cas de réutilisation des textes de cette page, voyez comment citer les auteurs et mentionner la licence.
+    Wikipedia® est une marque déposée de la Wikimedia Foundation, Inc., organisation de bienfaisance régie par le paragraphe 501(c)(3) du code fiscal des États-Unis.
+
+    Politique de confidentialité
+    À propos de Wikipédia
+    Avertissements
+    Contact
+    Version mobile
+    Développeurs
+    Statistiques
+    Déclaration sur les témoins (cookies)
+
+    Wikimedia Foundation
+    Powered by MediaWiki
+
+
+
+Aller au contenu
+Afficher / masquer la barre latérale
+Wikipédia l'encyclopédie libre
+Rechercher
+
+    Créer un compte
+
+Outils personnels
+
+    Article
+    Discussion
+
+    Lire
+    Modifier
+    Modifier le code
+    Voir l’historique
+
+    Accueil
+    Portails thématiques
+    Article au hasard
+    Contact
+
+Contribuer
+
+    Débuter sur Wikipédia
+    Aide
+    Communauté
+    Modifications récentes
+    Faire un don
+
+Outils
+
+    Pages liées
+    Suivi des pages liées
+    Téléverser un fichier
+    Pages spéciales
+    Lien permanent
+    Informations sur la page
+    Citer cette page
+    Élément Wikidata
+    Modifier les liens interlangues
+
+Imprimer / exporter
+
+    Créer un livre
+    Télécharger comme PDF
+    Version imprimable
+
+Dans d’autres projets
+
+    Wikimedia Commons
+
+Langues
+Sur cette version linguistique de Wikipédia, les liens interlangues sont placés en haut à droite du titre de l’article.
+Aller en haut.
+Codage de Huffman
+Page d’aide sur l’homonymie
+
+Pour les articles homonymes, voir Huffman.
+
+Le codage de Huffman est un algorithme de compression de données sans perte. Le codage de Huffman utilise un code à longueur variable pour représenter un symbole de la source (par exemple un caractère dans un fichier). Le code est déterminé à partir d'une estimation des probabilités d'apparition des symboles de source, un code court étant associé aux symboles de source les plus fréquents.
+
+Un code de Huffman est optimal au sens de la plus courte longueur pour un codage par symbole, et une distribution de probabilité connue. Des méthodes plus complexes réalisant une modélisation probabiliste de la source permettent d'obtenir de meilleurs ratios de compression.
+
+Il a été inventé par David Albert Huffman, et publié en 1952.
+Sommaire
+
+    1 Principe
+    2 Différentes méthodes de construction de l'arbre
+    3 Propriétés
+    4 Limitations du codage de Huffman
+    5 Code canonique
+    6 Utilisations
+    7 Histoire
+    8 Voir aussi
+        8.1 Articles connexes
+        8.2 Liens externes
+    9 Bibliographie
+    10 Notes et références
+
+Principe
+
+Le principe du codage de Huffman repose sur la création d'une structure d'arbre composée de nœuds.
+
+Supposons que la phrase à coder est « this is an example of a huffman tree ». On recherche tout d'abord le nombre d'occurrences de chaque caractère. Dans l'exemple précédent, la phrase contient 2 fois le caractère h et 7 espaces. Chaque caractère constitue une des feuilles de l'arbre à laquelle on associe un poids égal à son nombre d'occurrences.
+
+L'arbre est créé de la manière suivante, on associe chaque fois les deux nœuds de plus faibles poids, pour donner un nouveau nœud dont le poids équivaut à la somme des poids de ses fils. On réitère ce processus jusqu'à n'en avoir plus qu'un seul nœud : la racine. On associe ensuite par exemple le code 0 à chaque embranchement partant vers la gauche et le code 1 vers la droite.
+Un exemple d'arbre de Huffman, généré avec la phrase « this is an example of a huffman tree ».
+
+Pour obtenir le code binaire de chaque caractère, on remonte l'arbre à partir de la racine jusqu'aux feuilles en rajoutant à chaque fois au code un 0 ou un 1 selon la branche suivie. La phrase « this is an example of a huffman tree » se code alors sur 135 bits au lieu de 288 bits (si le codage initial des caractères tient sur 8 bits). Il est nécessaire de partir de la racine pour obtenir les codes binaires car sinon lors de la décompression, partir des feuilles peut entraîner une confusion lors du décodage.
+
+Pour coder « Wikipedia », nous obtenons donc en binaire : 101 11 011 11 100 010 001 11 000, soit 24 bits au lieu de 63 (9 caractères x 7 bits par caractère) en utilisant les codes ASCII (7 bits).
+Différentes méthodes de construction de l'arbre
+
+Il existe trois variantes de l'algorithme de Huffman, chacune d'elles définissant une méthode pour la création de l'arbre :
+
+    statique : chaque octet a un code prédéfini par le logiciel. L'arbre n'a pas besoin d'être transmis, mais la compression ne peut s'effectuer que sur un seul type de fichier (ex. : un texte en français, où les fréquences d'apparition du 'e' sont énormes ; celui-ci aura donc un code très court, rappelant l'alphabet morse) ;
+    semi-adaptatif : le fichier est d'abord lu, de manière à calculer les occurrences de chaque octet, puis l'arbre est construit à partir des poids de chaque octet. Cet arbre restera le même jusqu'à la fin de la compression. Cette compression occasionnera un gain de bits supérieur ou égal au codage de Huffman statique mais il sera nécessaire, pour la décompression, de transmettre l'arbre, ce qui annulera généralement le gain obtenu1 ;
+    adaptatif : c'est la méthode qui offre a priori les meilleurs taux de compression car il utilise un arbre connu (et ainsi non transmis) qui sera ensuite modifié de manière dynamique au fur et à mesure de la compression du flux selon les symboles précédemment rencontrés1. Cette méthode représente cependant le gros désavantage de devoir modifier souvent l'arbre, ce qui implique un temps d'exécution plus long. Par contre, la compression est toujours optimale et il n'est pas nécessaire que le fichier soit connu avant de compresser. En particulier, l'algorithme est capable de travailler sur des flux de données (streaming), car il n'est pas nécessaire de connaître les symboles à venir.
+
+Propriétés
+
+Un code de Huffman est un code de source. Pour une source S {\displaystyle S} S, représentée par une variable aléatoire X {\displaystyle X} X, de distribution de probabilité p {\displaystyle p} p, l'espérance de la longueur d'un code C {\displaystyle C} C est donnée par
+L ( C ) = ∑ x ∈ Ω p ( x ) ⋅ l ( x ) {\displaystyle L(C)=\sum _{x\in \Omega }p(x)\cdot l(x)} L(C)=\sum_{x \in \Omega}p(x) \cdot l(x)
+
+Où l ( x ) {\displaystyle l(x)} l(x) est la longueur du mot de code, C ( x ) {\displaystyle C(x)} C(x) le code associé au symbole de source x {\displaystyle x} x, et Ω {\displaystyle \Omega } \Omega est l'ensemble des symboles de source.
+
+Un code de Huffman est un code préfixe à longueur variable. Il est optimal, au sens de la plus courte longueur, pour un codage par symbole2. C'est-à-dire que pour un code de Huffman C ∗ {\displaystyle C^{*}} C^*, et pour tout code C {\displaystyle C} C uniquement décodable, alors :
+L ( C ∗ ) ≤ L ( C ) {\displaystyle L(C^{*})\leq L(C)} L(C^*) \le L(C)
+Limitations du codage de Huffman
+
+On peut montrer que pour une source X {\displaystyle X} X, d'entropie de Shannon H ( X ) {\displaystyle H(X)} H(X) la longueur moyenne L {\displaystyle L} L d'un mot de code obtenu par codage de Huffman vérifie:
+H ( X ) ≤ L < H ( X ) + 1 {\displaystyle H(X)\leq L<H(X)+1} H(X) \le L < H(X)+1
+
+Cette relation montre que le codage de Huffman s'approche de l'entropie de la source et c'est-à-dire du code optimum mais cela peut s'avérer en fait assez peu intéressant dans le cas où l'entropie de la source est forte, et où un surcoût de 1 bit devient important. De plus le codage de Huffman impose d'utiliser un nombre entier de bit pour un symbole source, ce qui peut s'avérer peu efficace.
+
+Une solution à ce problème est de travailler sur des blocs de n {\displaystyle n} n symboles. On montre alors qu'on peut s'approcher de façon plus fine de l'entropie :
+H ( X ) ≤ L < H ( X ) + 1 n {\displaystyle H(X)\leq L<H(X)+{\frac {1}{n}}} H(X) \le L < H(X)+\frac{1}{n}
+
+mais le processus d'estimation des probabilités devient plus complexe et coûteux.
+
+De plus, le codage de Huffman n'est pas adapté dans le cas d'une source dont les propriétés statistiques évoluent au cours du temps, puisque les probabilités des symboles se modifient et le codage devient inadapté. La solution consistant à ré-estimer à chaque itération les probabilités symboles est impraticable du fait de sa complexité en temps. La technique devient alors le codage Huffman adaptatif : à chaque nouveau symbole la table des fréquences est remise à jour et l'arbre de codage modifié si nécessaire. Le décompresseur faisant de même pour les mêmes causes… il reste synchronisé sur ce qu'avait fait le compresseur.
+
+En pratique, lorsque l'on veut s'approcher de l'entropie, on préfèrera un codage arithmétique qui est optimal au niveau du bit.
+
+Des méthodes plus complexes réalisant une modélisation probabiliste de la source et tirant profit de cette redondance supplémentaire permettent d'améliorer les performances de compression de cet algorithme (voir LZ77, prédiction par reconnaissance partielle, pondération de contextes).
+Code canonique
+
+Pour un même ensemble de symboles à coder, plusieurs codes de Huffman différents peuvent être obtenus.
+
+Il est possible de transformer un code de Huffman en un code de Huffman canonique qui est unique pour un ensemble de symboles d'entrée donné. Le principe est d'ordonner au départ les symboles dans l'ordre lexical.
+
+Remarque: entre deux symboles S1 et S2 qui, dans un code de Huffman spécifique, sont codés de la même longueur sont toujours codés de la même longueur dans le code Huffman canonique. Dans le cas où deux symboles ont la même probabilité et deux longueurs de code différentes, il est possible que le passage d'un code de Huffman à un code de Huffman canonique modifie la longueur de ces codes, afin de garantir l'attribution du code le plus court au premier symbole dans l'ordre lexicographique.
+Cette section est vide, insuffisamment détaillée ou incomplète. Votre aide est la bienvenue ! Comment faire ?
+Utilisations
+
+Le codage de Huffman ne se base que sur la fréquence relative des symboles d'entrée (suites de bits) sans distinction pour leur provenance (images, vidéos, sons, etc.). C'est pourquoi il est en général utilisé au second étage de compression, une fois la redondance propre au média mise en évidence par d'autres algorithmes. On pense en particulier à la compression JPEG pour les images, MPEG pour les vidéos et MP3 pour le son, qui peuvent retirer les éléments superflus imperceptibles pour les humains. On parle alors de compression non conservative (avec pertes).
+
+D'autres algorithmes de compression, dits conservatifs (sans pertes), tels que ceux utilisés pour la compression de fichiers, utilisent également Huffman pour comprimer le dictionnaire résultant. Par exemple, LZH (Lha) et deflate (ZIP, gzip, PNG) combinent un algorithme de compression par dictionnaire (LZ77) et un codage entropique de Huffman.
+Histoire
+
+Le codage a été inventé par David Albert Huffman, lors de sa thèse de doctorat au MIT. L'algorithme a été publié en 1952 dans l'article A Method for the Construction of Minimum-Redundancy Codes, dans les Proceedings of the Institute of Radio Engineers3.
+
+Les premiers Macintosh de la société Apple utilisaient un code inspiré de Huffman pour la représentation des textes : les 15 caractères les plus fréquents d'une langue étaient codés sur 4 bits, et la 16e configuration servait de préfixe au codage des autres sur un octet (ce qui faisait donc tantôt 4 bits, tantôt 12 bits par caractère voir UTF-8). Cette méthode simple se révélait économiser 30 % d'espace sur un texte moyen, à une époque où la mémoire vive restait encore un composant coûteux.
+Voir aussi
+Articles connexes
+
+    Codage entropique
+    Codage de Shannon-Fano, similaire au codage de Huffman mais où la méthode de calcul des codes diffère et peut aboutir à un arbre de codage différent.
+    Compression de données
+
+Liens externes
+
+    Generateur interactif de l'arbre de Huffman [archive]
+    Generateur visuel de l'arbre d'Huffman [archive]
+
+Bibliographie
+
+    (en) D.A. Huffman, "A method for the construction of minimum-redundancy codes [archive]" (PDF), Proceedings of the I.R.E., septembre 1952, pp 1098-1102
+    (en) Thomas M. Cover, Joy A. Thomas, Elements of Information Theory, Wiley-Interscience, 2006 (ISBN 978-0-471-24195-9) [détail des éditions]
+
+Notes et références
+
+    (en) Cet article est partiellement ou en totalité issu de l’article de Wikipédia en anglais intitulé « Huffman coding » (voir la liste des auteurs).
+
+Mark Nelson (trad. Soulard Hervé), La Compression des données : Texte, Images, Sons, France, Dunod, 1993, 420 p. (ISBN 2-10-001681-4), page 65.
+Cover, Thomas (2006), p. 123-127.
+
+    D.A. Huffman, A method for the construction of minimum-redundancy codes, Proceedings of the I.R.E., septembre 1952, pp. 1098-1102.
+
+ [masquer]
+v · m
+Techniques de compression de données
+Sans perte 	
+Codage entropique 	
+
+    Unaire Binaire tronqué Gamma Delta Omega Zeta Fibonacci Levenshtein Even-Rodeh Stout Golomb Rice Exp-Golomb Shannon-Fano Huffman Shannon-Fano-Elias (en) Arithmétique Par intervalle
+
+Dictionnaire 	
+
+    LZ77 et LZ78 LZSS Lempel-Ziv-Welch Lempel-Ziv-Oberhumer
+
+Modélisation de contextes 	
+
+    Modélisation de Markov dynamique (DMC) Prédiction par reconnaissance partielle (PPM) Pondération de contextes (CM) Pondération de contextes arborescents (en) (CTW)
+
+Techniques hybrides 	
+
+    Implode Deflate LZP LZMA ROLZ
+
+Autres 	Codage par plages
+Transformations 	
+
+    Codage différentiel (Delta) Transformée en étoile Move-to-front (MTF) Transformée de Burrows-Wheeler (BWT) Transformée par substitution de mots (WRT) BCJ2
+
+Formats de fichiers 	
+
+    7z ACE ARC ARJ B1 bzip2 CAB gzip LHA / LZH RAR UHA XZ Z Zip
+
+Avec pertes 	
+Codage par transformation 	Compression par ondelettes
+Autres 	
+
+    Modulation par impulsions et codage différentiel adaptatif (ADPCM) Compression fractale
+
+Transformations 	
+
+    Transformée de Karhunen-Loève (KLT) Transformée en cosinus discrète (DCT) Transformation de Fourier discrète (DFT) Transformée en ondelettes discrète (DWT)
+
+    icône décorative Portail de l'informatique théorique 
+
+Catégories :
+
+    Codage entropiqueCode préfixe
+
+[+]
+
+    La dernière modification de cette page a été faite le 3 juin 2021 à 11:08.
+    Droit d'auteur : les textes sont disponibles sous licence Creative Commons attribution, partage dans les mêmes conditions ; d’autres conditions peuvent s’appliquer. Voyez les conditions d’utilisation pour plus de détails, ainsi que les crédits graphiques. En cas de réutilisation des textes de cette page, voyez comment citer les auteurs et mentionner la licence.
+    Wikipedia® est une marque déposée de la Wikimedia Foundation, Inc., organisation de bienfaisance régie par le paragraphe 501(c)(3) du code fiscal des États-Unis.
+
+    Politique de confidentialité
+    À propos de Wikipédia
+    Avertissements
+    Contact
+    Version mobile
+    Développeurs
+    Statistiques
+    Déclaration sur les témoins (cookies)
+
+    Wikimedia Foundation
+    Powered by MediaWiki
+
+
+
+Aller au contenu
+Afficher / masquer la barre latérale
+Wikipédia l'encyclopédie libre
+Rechercher
+
+    Créer un compte
+
+Outils personnels
+
+    Article
+    Discussion
+
+    Lire
+    Modifier
+    Modifier le code
+    Voir l’historique
+
+    Accueil
+    Portails thématiques
+    Article au hasard
+    Contact
+
+Contribuer
+
+    Débuter sur Wikipédia
+    Aide
+    Communauté
+    Modifications récentes
+    Faire un don
+
+Outils
+
+    Pages liées
+    Suivi des pages liées
+    Téléverser un fichier
+    Pages spéciales
+    Lien permanent
+    Informations sur la page
+    Citer cette page
+    Élément Wikidata
+    Modifier les liens interlangues
+
+Imprimer / exporter
+
+    Créer un livre
+    Télécharger comme PDF
+    Version imprimable
+
+Dans d’autres projets
+
+    Wikimedia Commons
+
+Langues
+Sur cette version linguistique de Wikipédia, les liens interlangues sont placés en haut à droite du titre de l’article.
+Aller en haut.
+Codage de Huffman
+Page d’aide sur l’homonymie
+
+Pour les articles homonymes, voir Huffman.
+
+Le codage de Huffman est un algorithme de compression de données sans perte. Le codage de Huffman utilise un code à longueur variable pour représenter un symbole de la source (par exemple un caractère dans un fichier). Le code est déterminé à partir d'une estimation des probabilités d'apparition des symboles de source, un code court étant associé aux symboles de source les plus fréquents.
+
+Un code de Huffman est optimal au sens de la plus courte longueur pour un codage par symbole, et une distribution de probabilité connue. Des méthodes plus complexes réalisant une modélisation probabiliste de la source permettent d'obtenir de meilleurs ratios de compression.
+
+Il a été inventé par David Albert Huffman, et publié en 1952.
+Sommaire
+
+    1 Principe
+    2 Différentes méthodes de construction de l'arbre
+    3 Propriétés
+    4 Limitations du codage de Huffman
+    5 Code canonique
+    6 Utilisations
+    7 Histoire
+    8 Voir aussi
+        8.1 Articles connexes
+        8.2 Liens externes
+    9 Bibliographie
+    10 Notes et références
+
+Principe
+
+Le principe du codage de Huffman repose sur la création d'une structure d'arbre composée de nœuds.
+
+Supposons que la phrase à coder est « this is an example of a huffman tree ». On recherche tout d'abord le nombre d'occurrences de chaque caractère. Dans l'exemple précédent, la phrase contient 2 fois le caractère h et 7 espaces. Chaque caractère constitue une des feuilles de l'arbre à laquelle on associe un poids égal à son nombre d'occurrences.
+
+L'arbre est créé de la manière suivante, on associe chaque fois les deux nœuds de plus faibles poids, pour donner un nouveau nœud dont le poids équivaut à la somme des poids de ses fils. On réitère ce processus jusqu'à n'en avoir plus qu'un seul nœud : la racine. On associe ensuite par exemple le code 0 à chaque embranchement partant vers la gauche et le code 1 vers la droite.
+Un exemple d'arbre de Huffman, généré avec la phrase « this is an example of a huffman tree ».
+
+Pour obtenir le code binaire de chaque caractère, on remonte l'arbre à partir de la racine jusqu'aux feuilles en rajoutant à chaque fois au code un 0 ou un 1 selon la branche suivie. La phrase « this is an example of a huffman tree » se code alors sur 135 bits au lieu de 288 bits (si le codage initial des caractères tient sur 8 bits). Il est nécessaire de partir de la racine pour obtenir les codes binaires car sinon lors de la décompression, partir des feuilles peut entraîner une confusion lors du décodage.
+
+Pour coder « Wikipedia », nous obtenons donc en binaire : 101 11 011 11 100 010 001 11 000, soit 24 bits au lieu de 63 (9 caractères x 7 bits par caractère) en utilisant les codes ASCII (7 bits).
+Différentes méthodes de construction de l'arbre
+
+Il existe trois variantes de l'algorithme de Huffman, chacune d'elles définissant une méthode pour la création de l'arbre :
+
+    statique : chaque octet a un code prédéfini par le logiciel. L'arbre n'a pas besoin d'être transmis, mais la compression ne peut s'effectuer que sur un seul type de fichier (ex. : un texte en français, où les fréquences d'apparition du 'e' sont énormes ; celui-ci aura donc un code très court, rappelant l'alphabet morse) ;
+    semi-adaptatif : le fichier est d'abord lu, de manière à calculer les occurrences de chaque octet, puis l'arbre est construit à partir des poids de chaque octet. Cet arbre restera le même jusqu'à la fin de la compression. Cette compression occasionnera un gain de bits supérieur ou égal au codage de Huffman statique mais il sera nécessaire, pour la décompression, de transmettre l'arbre, ce qui annulera généralement le gain obtenu1 ;
+    adaptatif : c'est la méthode qui offre a priori les meilleurs taux de compression car il utilise un arbre connu (et ainsi non transmis) qui sera ensuite modifié de manière dynamique au fur et à mesure de la compression du flux selon les symboles précédemment rencontrés1. Cette méthode représente cependant le gros désavantage de devoir modifier souvent l'arbre, ce qui implique un temps d'exécution plus long. Par contre, la compression est toujours optimale et il n'est pas nécessaire que le fichier soit connu avant de compresser. En particulier, l'algorithme est capable de travailler sur des flux de données (streaming), car il n'est pas nécessaire de connaître les symboles à venir.
+
+Propriétés
+
+Un code de Huffman est un code de source. Pour une source S {\displaystyle S} S, représentée par une variable aléatoire X {\displaystyle X} X, de distribution de probabilité p {\displaystyle p} p, l'espérance de la longueur d'un code C {\displaystyle C} C est donnée par
+L ( C ) = ∑ x ∈ Ω p ( x ) ⋅ l ( x ) {\displaystyle L(C)=\sum _{x\in \Omega }p(x)\cdot l(x)} L(C)=\sum_{x \in \Omega}p(x) \cdot l(x)
+
+Où l ( x ) {\displaystyle l(x)} l(x) est la longueur du mot de code, C ( x ) {\displaystyle C(x)} C(x) le code associé au symbole de source x {\displaystyle x} x, et Ω {\displaystyle \Omega } \Omega est l'ensemble des symboles de source.
+
+Un code de Huffman est un code préfixe à longueur variable. Il est optimal, au sens de la plus courte longueur, pour un codage par symbole2. C'est-à-dire que pour un code de Huffman C ∗ {\displaystyle C^{*}} C^*, et pour tout code C {\displaystyle C} C uniquement décodable, alors :
+L ( C ∗ ) ≤ L ( C ) {\displaystyle L(C^{*})\leq L(C)} L(C^*) \le L(C)
+Limitations du codage de Huffman
+
+On peut montrer que pour une source X {\displaystyle X} X, d'entropie de Shannon H ( X ) {\displaystyle H(X)} H(X) la longueur moyenne L {\displaystyle L} L d'un mot de code obtenu par codage de Huffman vérifie:
+H ( X ) ≤ L < H ( X ) + 1 {\displaystyle H(X)\leq L<H(X)+1} H(X) \le L < H(X)+1
+
+Cette relation montre que le codage de Huffman s'approche de l'entropie de la source et c'est-à-dire du code optimum mais cela peut s'avérer en fait assez peu intéressant dans le cas où l'entropie de la source est forte, et où un surcoût de 1 bit devient important. De plus le codage de Huffman impose d'utiliser un nombre entier de bit pour un symbole source, ce qui peut s'avérer peu efficace.
+
+Une solution à ce problème est de travailler sur des blocs de n {\displaystyle n} n symboles. On montre alors qu'on peut s'approcher de façon plus fine de l'entropie :
+H ( X ) ≤ L < H ( X ) + 1 n {\displaystyle H(X)\leq L<H(X)+{\frac {1}{n}}} H(X) \le L < H(X)+\frac{1}{n}
+
+mais le processus d'estimation des probabilités devient plus complexe et coûteux.
+
+De plus, le codage de Huffman n'est pas adapté dans le cas d'une source dont les propriétés statistiques évoluent au cours du temps, puisque les probabilités des symboles se modifient et le codage devient inadapté. La solution consistant à ré-estimer à chaque itération les probabilités symboles est impraticable du fait de sa complexité en temps. La technique devient alors le codage Huffman adaptatif : à chaque nouveau symbole la table des fréquences est remise à jour et l'arbre de codage modifié si nécessaire. Le décompresseur faisant de même pour les mêmes causes… il reste synchronisé sur ce qu'avait fait le compresseur.
+
+En pratique, lorsque l'on veut s'approcher de l'entropie, on préfèrera un codage arithmétique qui est optimal au niveau du bit.
+
+Des méthodes plus complexes réalisant une modélisation probabiliste de la source et tirant profit de cette redondance supplémentaire permettent d'améliorer les performances de compression de cet algorithme (voir LZ77, prédiction par reconnaissance partielle, pondération de contextes).
+Code canonique
+
+Pour un même ensemble de symboles à coder, plusieurs codes de Huffman différents peuvent être obtenus.
+
+Il est possible de transformer un code de Huffman en un code de Huffman canonique qui est unique pour un ensemble de symboles d'entrée donné. Le principe est d'ordonner au départ les symboles dans l'ordre lexical.
+
+Remarque: entre deux symboles S1 et S2 qui, dans un code de Huffman spécifique, sont codés de la même longueur sont toujours codés de la même longueur dans le code Huffman canonique. Dans le cas où deux symboles ont la même probabilité et deux longueurs de code différentes, il est possible que le passage d'un code de Huffman à un code de Huffman canonique modifie la longueur de ces codes, afin de garantir l'attribution du code le plus court au premier symbole dans l'ordre lexicographique.
+Cette section est vide, insuffisamment détaillée ou incomplète. Votre aide est la bienvenue ! Comment faire ?
+Utilisations
+
+Le codage de Huffman ne se base que sur la fréquence relative des symboles d'entrée (suites de bits) sans distinction pour leur provenance (images, vidéos, sons, etc.). C'est pourquoi il est en général utilisé au second étage de compression, une fois la redondance propre au média mise en évidence par d'autres algorithmes. On pense en particulier à la compression JPEG pour les images, MPEG pour les vidéos et MP3 pour le son, qui peuvent retirer les éléments superflus imperceptibles pour les humains. On parle alors de compression non conservative (avec pertes).
+
+D'autres algorithmes de compression, dits conservatifs (sans pertes), tels que ceux utilisés pour la compression de fichiers, utilisent également Huffman pour comprimer le dictionnaire résultant. Par exemple, LZH (Lha) et deflate (ZIP, gzip, PNG) combinent un algorithme de compression par dictionnaire (LZ77) et un codage entropique de Huffman.
+Histoire
+
+Le codage a été inventé par David Albert Huffman, lors de sa thèse de doctorat au MIT. L'algorithme a été publié en 1952 dans l'article A Method for the Construction of Minimum-Redundancy Codes, dans les Proceedings of the Institute of Radio Engineers3.
+
+Les premiers Macintosh de la société Apple utilisaient un code inspiré de Huffman pour la représentation des textes : les 15 caractères les plus fréquents d'une langue étaient codés sur 4 bits, et la 16e configuration servait de préfixe au codage des autres sur un octet (ce qui faisait donc tantôt 4 bits, tantôt 12 bits par caractère voir UTF-8). Cette méthode simple se révélait économiser 30 % d'espace sur un texte moyen, à une époque où la mémoire vive restait encore un composant coûteux.
+Voir aussi
+Articles connexes
+
+    Codage entropique
+    Codage de Shannon-Fano, similaire au codage de Huffman mais où la méthode de calcul des codes diffère et peut aboutir à un arbre de codage différent.
+    Compression de données
+
+Liens externes
+
+    Generateur interactif de l'arbre de Huffman [archive]
+    Generateur visuel de l'arbre d'Huffman [archive]
+
+Bibliographie
+
+    (en) D.A. Huffman, "A method for the construction of minimum-redundancy codes [archive]" (PDF), Proceedings of the I.R.E., septembre 1952, pp 1098-1102
+    (en) Thomas M. Cover, Joy A. Thomas, Elements of Information Theory, Wiley-Interscience, 2006 (ISBN 978-0-471-24195-9) [détail des éditions]
+
+Notes et références
+
+    (en) Cet article est partiellement ou en totalité issu de l’article de Wikipédia en anglais intitulé « Huffman coding » (voir la liste des auteurs).
+
+Mark Nelson (trad. Soulard Hervé), La Compression des données : Texte, Images, Sons, France, Dunod, 1993, 420 p. (ISBN 2-10-001681-4), page 65.
+Cover, Thomas (2006), p. 123-127.
+
+    D.A. Huffman, A method for the construction of minimum-redundancy codes, Proceedings of the I.R.E., septembre 1952, pp. 1098-1102.
+
+ [masquer]
+v · m
+Techniques de compression de données
+Sans perte 	
+Codage entropique 	
+
+    Unaire Binaire tronqué Gamma Delta Omega Zeta Fibonacci Levenshtein Even-Rodeh Stout Golomb Rice Exp-Golomb Shannon-Fano Huffman Shannon-Fano-Elias (en) Arithmétique Par intervalle
+
+Dictionnaire 	
+
+    LZ77 et LZ78 LZSS Lempel-Ziv-Welch Lempel-Ziv-Oberhumer
+
+Modélisation de contextes 	
+
+    Modélisation de Markov dynamique (DMC) Prédiction par reconnaissance partielle (PPM) Pondération de contextes (CM) Pondération de contextes arborescents (en) (CTW)
+
+Techniques hybrides 	
+
+    Implode Deflate LZP LZMA ROLZ
+
+Autres 	Codage par plages
+Transformations 	
+
+    Codage différentiel (Delta) Transformée en étoile Move-to-front (MTF) Transformée de Burrows-Wheeler (BWT) Transformée par substitution de mots (WRT) BCJ2
+
+Formats de fichiers 	
+
+    7z ACE ARC ARJ B1 bzip2 CAB gzip LHA / LZH RAR UHA XZ Z Zip
+
+Avec pertes 	
+Codage par transformation 	Compression par ondelettes
+Autres 	
+
+    Modulation par impulsions et codage différentiel adaptatif (ADPCM) Compression fractale
+
+Transformations 	
+
+    Transformée de Karhunen-Loève (KLT) Transformée en cosinus discrète (DCT) Transformation de Fourier discrète (DFT) Transformée en ondelettes discrète (DWT)
+
+    icône décorative Portail de l'informatique théorique 
+
+Catégories :
+
+    Codage entropiqueCode préfixe
+
+[+]
+
+    La dernière modification de cette page a été faite le 3 juin 2021 à 11:08.
+    Droit d'auteur : les textes sont disponibles sous licence Creative Commons attribution, partage dans les mêmes conditions ; d’autres conditions peuvent s’appliquer. Voyez les conditions d’utilisation pour plus de détails, ainsi que les crédits graphiques. En cas de réutilisation des textes de cette page, voyez comment citer les auteurs et mentionner la licence.
+    Wikipedia® est une marque déposée de la Wikimedia Foundation, Inc., organisation de bienfaisance régie par le paragraphe 501(c)(3) du code fiscal des États-Unis.
+
+    Politique de confidentialité
+    À propos de Wikipédia
+    Avertissements
+    Contact
+    Version mobile
+    Développeurs
+    Statistiques
+    Déclaration sur les témoins (cookies)
+
+    Wikimedia Foundation
+    Powered by MediaWiki
+
