@@ -72,19 +72,11 @@ var
   w : WideString;
     w2 : WideString;
 begin
- //AssignFile(myFile, FileDestlab.Text);
- // ReWrite(myFile);
-  // Write a couple of well known words to this file
- // write(myFile, 'Hello ');
- // write(myFile, 'World');
- // CloseFile(myFile);
 
      if TabControl1.TabIndex = 0 then
      begin
           Compress_file(FilePathlab.Text, FileDestlab.Text);
-          {w := 'text.txt';
-          w2 := 'enc.txt';
-          Compress_file( w, w2);      }
+
      end
      else if TabControl1.TabIndex = 1 then
      begin
@@ -93,19 +85,7 @@ begin
 
 
 
- { FZip := TZipFile.Create;
-  FZip.Open(FileDestlab.Text, zmWrite);
-  if TabControl1.TabIndex = 0 then
-  begin
-    if((FilePathlab.Text <> '') and (FileDestlab.Text <> '')) then
-    begin
-      FZip.ZipDirectoryContents(FileDestlab.Text, FilePathlab.Text  );
-    end
-    else
-    begin
-      ShowMessage('Select a path destination and a file to compress.');
-    end;
-  end;    }
+
 
 end;
 
