@@ -7,13 +7,22 @@
 #include <Wtypes.h>
 int main()
 {
-    BSTR n1 = SysAllocString(L"text.txt");
-    BSTR n2 = SysAllocString(L"enc.txt");
-    BSTR n3 = SysAllocString(L"enc.txt");
-    BSTR n4 = SysAllocString(L"dec.txt");
-    Compress_file(n1, n2);
-    Decompress_file(n3, n4);
-
+    BSTR n1 = SysAllocString(L"rm.pdf");
+    BSTR n2 = SysAllocString(L"rm.rm");
+    BSTR n3 = SysAllocString(L"rm.rm");
+    BSTR n4 = SysAllocString(L"dec.pdf");
+	init_progression();
+	get_progression();
+	Compress_file(n1, n2);
+	End_Compress_file();
+	cout << "get " << get_progression_interface() << endl;
+	end_progression();
+	 
+	init_progression();
+	get_progression();
+	Decompress_file(n3, n4);
+	End_Decompress_file();
+	end_progression();
 
 
 }
