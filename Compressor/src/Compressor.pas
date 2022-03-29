@@ -5,7 +5,23 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Menus, Vcl.StdCtrls, FileCtrl, System.Zip, System.ZLib,
-  Vcl.ComCtrls;
+  Vcl.ComCtrls, Vcl.ExtCtrls;
+
+type
+    TMyThreadc = class(TThread)
+    private
+      { Private declarations }
+    protected
+      procedure Execute; override;
+    end;
+
+type
+    TMyThreadd = class(TThread)
+    private
+      { Private declarations }
+    protected
+      procedure Execute; override;
+    end;
 
 type
   TForm1 = class(TForm)
@@ -26,6 +42,9 @@ type
     FileDestlab: TEdit;
     FileDestbutt: TButton;
     OpenFileButt: TButton;
+    CDTimer: TTimer;
+    upButt: TButton;
+    downButt: TButton;
 
     procedure Exit1Click(Sender: TObject);
     procedure Author1Click(Sender: TObject);
@@ -34,15 +53,23 @@ type
     procedure New1Click(Sender: TObject);
     procedure TabControl1Change(Sender: TObject);
     procedure CompressButtClick(Sender: TObject);
+    procedure CDTimerTimer(Sender: TObject);
+    procedure upButtClick(Sender: TObject);
+    procedure downButtClick(Sender: TObject);
 
   private
     { Déclarations privées }
+    procedure compression();stdcall;
+    procedure decompression();stdcall;
   public
+
     { Déclarations publiques }
   end;
 
 var
   Form1: TForm1;
+
+
 
 implementation
   uses About;
@@ -54,6 +81,14 @@ procedure Compress_file(name:WideString; namef:WideString);
   stdcall; external HUFFMAN_LIB name 'Compress_file';
 procedure Decompress_file(name:WideString ; namef:WideString );
   stdcall; external HUFFMAN_LIB name 'Decompress_file';
+procedure init_progression();
+  stdcall; external HUFFMAN_LIB name 'init_progression';
+function get_progression_interface():integer;
+  stdcall; external HUFFMAN_LIB name 'get_progression_interface';
+procedure End_Compress_file();
+  stdcall; external HUFFMAN_LIB name 'End_Compress_file';
+procedure End_Decompress_file();
+  stdcall; external HUFFMAN_LIB name 'End_Decompress_file';
 
 procedure TForm1.Author1Click(Sender: TObject);
 var Tab : TAboutForm;
@@ -63,24 +98,60 @@ begin
     Tab.Release;
 end;
 
+procedure TForm1.CDTimerTimer(Sender: TObject);
+begin
+     ProgressBar1.Position := get_progression_interface;
+
+end;
+
+procedure TForm1.compression();stdcall;
+begin
+  init_progression();
+  CDTimer.Enabled := True;
+  Compress_file(FilePathlab.Text, FileDestlab.Text);
+  End_Compress_file;
+  CompressButt.Enabled := True;
+end;
+
+procedure TForm1.decompression();stdcall;
+begin
+  init_progression();
+  CDTimer.Enabled := True;
+  Decompress_file(FilePathlab.Text, FileDestlab.Text);
+  End_Decompress_file;
+  CompressButt.Enabled := True;
+end;
+
+procedure TMyThreadc.Execute;
+begin
+     Form1.compression;
+end;
+
+procedure TMyThreadd.Execute;
+begin
+     Form1.decompression;
+end;
+
+
 procedure TForm1.CompressButtClick(Sender: TObject);
 var
-  FZip: TZipFile;
-  myFile : TextFile;
-  LInput, LOutput: TFileStream;
-  LZip: TZCompressionStream;
-  w : WideString;
-    w2 : WideString;
+    thc : TMyThreadc;
+    thd : TMyThreadd;
 begin
-
+     ProgressBar1.Min := 0;
+     ProgressBar1.Max := 100;
+     ProgressBar1.Position := 0;
+     CompressButt.Enabled := False;
      if TabControl1.TabIndex = 0 then
      begin
-          Compress_file(FilePathlab.Text, FileDestlab.Text);
+
+          thc := TMyThreadc.Create(False);
 
      end
      else if TabControl1.TabIndex = 1 then
      begin
-          Decompress_file(FilePathlab.Text, FileDestlab.Text);
+          thd := TMyThreadd.Create(False);
+
      end;
 
 
@@ -137,6 +208,16 @@ begin
           CompressButt.Caption := 'Decompress';
           Label1.Caption := 'File to decompress :';
      end;
+end;
+
+procedure TForm1.upButtClick(Sender: TObject);
+begin
+      FilePathlab.Text := FileDestlab.Text;
+end;
+
+procedure TForm1.downButtClick(Sender: TObject);
+begin
+      FileDestlab.Text := FilePathlab.Text;
 end;
 
 end.

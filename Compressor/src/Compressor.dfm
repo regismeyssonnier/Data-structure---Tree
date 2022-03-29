@@ -123,6 +123,24 @@ object Form1: TForm1
       TabOrder = 4
       OnClick = OpenFileButtClick
     end
+    object upButt: TButton
+      Left = 680
+      Top = 72
+      Width = 25
+      Height = 25
+      Caption = '/\'
+      TabOrder = 5
+      OnClick = upButtClick
+    end
+    object downButt: TButton
+      Left = 680
+      Top = 103
+      Width = 25
+      Height = 25
+      Caption = '\/'
+      TabOrder = 6
+      OnClick = downButtClick
+    end
   end
   object MainMenu1: TMainMenu
     Left = 120
@@ -152,5 +170,12 @@ object Form1: TForm1
   object OpenDialog1: TOpenDialog
     Left = 568
     Top = 232
+  end
+  object CDTimer: TTimer
+    Enabled = False
+    Interval = 10
+    OnTimer = CDTimerTimer
+    Left = 656
+    Top = 216
   end
 end
