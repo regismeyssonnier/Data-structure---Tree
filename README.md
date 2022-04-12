@@ -1,16 +1,18 @@
-# Segment-tree
+## 1. Data structure project
+
+This project contains some **data structure** like many sample of **segment tree**, **fenwick tree** and other types.
 
 
+## 2. Compression / Decompression
 
-Welcome to the Segment-tree wiki!
-
-Segment tree
-
-Use addmin and minimum to find the minimum of a range.
-
-Use add and sumto find the sum of a range.
-
-
-# Bit tree(Fenwick tree)
-
-Use add to create and add to the tree and inter to sum a range.
+  ### 🥇2.1 Compression with huffman
+  
+  This project contains some code to compress with the Huffman coding and to decompress with.
+  
+  ### 🥈2.2 Compression with LZW
+  
+  This project contains some code to compress with the LZW coding and to decompress with.
+  
+  ### 🎱2.3 Compressor software
+  
+  This project contains ***Compressor software*** to compress in combining the **Huffman** and **LZW** coding and to decompress with.
