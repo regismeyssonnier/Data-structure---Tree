@@ -134,7 +134,7 @@ void Menu() {
     cout << "1 - Generate 5 cc code + cvv\n";
     cout << "2 - Generate nb cc code + cvv JSON format \n";
     cout << "3 - Generate nb cc code + cvv JSON js format\n";
-    cout << "4 - Generate nb cc code + cvv CVV format\n";
+    cout << "4 - Generate nb cc code + cvv CSV format\n";
     cout << "9 - Before 2, 3, 4 for saving in file (change path)\n";
     cout << "10 - choose 1 MasterCard, 2 Visa\n";
 }
@@ -144,7 +144,7 @@ int main()
     srand(time(NULL));
 
     string cc = "8172032761370223";
-    string path = "C:\\Users\\";// \\Documents\\";
+    string path = "C:\\Users\\";
     string type = "5";
     int a;
 
